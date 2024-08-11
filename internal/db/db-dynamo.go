@@ -55,7 +55,8 @@ func tableExists() bool {
 	}
 	log.Println("Successfully connected to DynamoDB")
 
-	// Print out all the table names
+	// Gets the table names from the response and matches
+	// the table name with the one we are looking for
 	for _, table := range existingTables.TableNames {
 		var tablePtr *string = &table
 		if *tablePtr == tableName {
@@ -131,7 +132,7 @@ func GetUserByID(id string) (*models.User, error) {
 	}
 
 	if result.Item == nil {
-		return nil, nil // Item not found
+		return nil, nil // User not found
 	}
 
 	var user models.User
@@ -158,7 +159,7 @@ func GetUserByEmail(id string) (*models.User, error) {
 	}
 
 	if result.Item == nil {
-		return nil, nil // Item not found
+		return nil, nil // User not found
 	}
 
 	var user models.User
