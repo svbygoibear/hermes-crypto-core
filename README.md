@@ -1,5 +1,5 @@
 <h1 align="center"> hermes-crypto</h1>
-<p align="center"><img alt="hermes-crypto" src="./src/assets/svg/hermes-crypto-logo.svg" width="200"></p>
+<p align="center"><img alt="hermes-crypto" src="./assets/hermes-crypto-logo.svg" width="200"></p>
 
 Hermes (called Mercury in Roman mythology) was considered the messenger of the Olympic gods. He possesses the ability to influence outcomes and tip the scales in favor of those who seek his favor. As the god of luck, he brings both fortune and misfortune to those who dare to test their luck.
 
