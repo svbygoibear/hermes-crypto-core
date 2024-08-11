@@ -22,12 +22,12 @@ const tableName = "hermes-crypto-users"
 // Init initializes the DynamoDB client
 func Init() {
 	endpoint := os.Getenv("DYNAMO_ENDPOINT")
-	region := os.Getenv("AWS_DYNAMODB_REGION")
+	dbRegion := os.Getenv("AWS_DYNAMODB_REGION")
 	keyId := os.Getenv("AWS_DYNAMODB_ACCESS_KEY_ID")
 	accessKey := os.Getenv("AWS_DYNAMODB_SECRET_ACCESS_KEY")
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithRegion(region),
+		config.WithRegion(dbRegion),
 		config.WithEndpointResolver(aws.EndpointResolverFunc(
 			func(service, region string) (aws.Endpoint, error) {
 				if endpoint != "" {
@@ -47,15 +47,15 @@ func Init() {
 
 	log.Default().Print("DynamoDB client created")
 
-	// Test connection before proceeding
-	hasTable := tableExists()
+	// // Test connection before proceeding
+	// hasTable := tableExists()
 
-	log.Default().Print("Do we have a table? ", hasTable)
+	// log.Default().Print("Do we have a table? ", hasTable)
 
-	if !hasTable {
-		// Ensure the table exists
-		createTableIfNotExists()
-	}
+	// if !hasTable {
+	// 	// Ensure the table exists
+	// 	createTableIfNotExists()
+	// }
 }
 
 func tableExists() bool {
