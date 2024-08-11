@@ -41,6 +41,6 @@ jobs:
 
     - name: Deploy to AWS Lambda
       env:
-          LAMBDA_FUNCTION_NAME: ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}
+        LAMBDA_FUNCTION_NAME: ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}
       run: |
         aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://bootstrap.zip
