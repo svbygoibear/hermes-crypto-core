@@ -14,8 +14,8 @@ type Vote struct {
 }
 
 type User struct {
-	ID    string `json:"id"` // Partition key
+	Id    string `json:"id"` // Partition key
 	Name  string `json:"name"`
-	Email string `json:"email"`
+	Email string `json:"email"` // Sort key
 	Votes []Vote `json:"votes"`
 }

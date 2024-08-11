@@ -1,0 +1,39 @@
+name: Deploy to AWS Lambda
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.22.6'
+
+    - name: Install dependencies
+      run: go mod tidy
+
+    - name: Build the Go binary
+      run: GOOS=linux go build -o bootstrap main.go
+
+    - name: Zip the binary
+      run: zip function.zip bootstrap
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        role-session-name: ${{ secrets.AWS_ROLE_TO_ASSUME_NAME }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Deploy to AWS Lambda
+      run: |
+        aws lambda update-function-code --function-name go-lambda-cicd --zip-file fileb://function.zip
