@@ -24,9 +24,9 @@ func init() {
 
 	// Routes for the users API
 	r.GET("users/health", users.HealthCheck)
-	r.GET("users/votes", users.GetUsers)
-	r.GET("users/votes/:id", users.GetUser)
-	r.POST("users/votes", users.CreateUser)
+	r.GET("users/vote", users.GetUsers)
+	r.GET("users/vote/:id", users.GetUser)
+	r.POST("users/vote", users.CreateUser)
 
 	// Set up the Lambda proxy
 	ginLambda = ginadapter.New(r)
