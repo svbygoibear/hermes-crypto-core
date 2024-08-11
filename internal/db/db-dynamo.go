@@ -7,6 +7,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
@@ -22,9 +23,8 @@ const tableName = "hermes-crypto-users"
 func Init() {
 	endpoint := os.Getenv("DYNAMO_ENDPOINT")
 	region := os.Getenv("AWS_DYNAMODB_REGION")
-
-	log.Default().Print("This is the endpoint: ", endpoint)
-	log.Default().Print("This is the region: ", region)
+	keyId := os.Getenv("AWS_DYNAMODB_ACCESS_KEY_ID")
+	accessKey := os.Getenv("AWS_DYNAMODB_SECRET_ACCESS_KEY")
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithRegion(region),
@@ -36,12 +36,13 @@ func Init() {
 				// Fall back to default endpoint resolution
 				return aws.Endpoint{}, &aws.EndpointNotFoundError{}
 			})),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(keyId, accessKey, "")),
 	)
 	if err != nil {
 		log.Fatalf("unable to load SDK config, %v", err)
 	}
 
-	// Create the DynamoDB client
+	// Add client configuration
 	client = dynamodb.NewFromConfig(cfg)
 
 	log.Default().Print("DynamoDB client created")
