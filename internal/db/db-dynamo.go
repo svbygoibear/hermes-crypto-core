@@ -46,41 +46,6 @@ func Init() {
 	if !hasTable {
 		createTableIfNotExists()
 	}
-	// endpoint := os.Getenv("DYNAMO_ENDPOINT")
-	// dbRegion := os.Getenv("AWS_DYNAMODB_REGION")
-	// keyId := os.Getenv("AWS_DYNAMODB_ACCESS_KEY_ID")
-	// accessKey := os.Getenv("AWS_DYNAMODB_SECRET_ACCESS_KEY")
-
-	// cfg, err := config.LoadDefaultConfig(context.TODO(),
-	// 	config.WithRegion(dbRegion),
-	// 	config.WithEndpointResolver(aws.EndpointResolverFunc(
-	// 		func(service, region string) (aws.Endpoint, error) {
-	// 			if endpoint != "" {
-	// 				return aws.Endpoint{URL: endpoint}, nil
-	// 			}
-	// 			// Fall back to default endpoint resolution
-	// 			return aws.Endpoint{}, &aws.EndpointNotFoundError{}
-	// 		})),
-	// 	config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(keyId, accessKey, "")),
-	// )
-	// if err != nil {
-	// 	log.Fatalf("unable to load SDK config, %v", err)
-	// }
-
-	// // Add client configuration
-	// client = dynamodb.NewFromConfig(cfg)
-
-	// log.Default().Print("DynamoDB client created")
-
-	// // Test connection before proceeding
-	// hasTable := tableExists()
-
-	// log.Default().Print("Do we have a table? ", hasTable)
-
-	// if !hasTable {
-	// 	// Ensure the table exists
-	// 	createTableIfNotExists()
-	// }
 }
 
 func tableExists() bool {
