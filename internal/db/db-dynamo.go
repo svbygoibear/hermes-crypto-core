@@ -7,7 +7,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
@@ -21,31 +20,57 @@ const tableName = "hermes-crypto-users"
 
 // Init initializes the DynamoDB client
 func Init() {
-	endpoint := os.Getenv("DYNAMO_ENDPOINT")
 	dbRegion := os.Getenv("AWS_DYNAMODB_REGION")
-	keyId := os.Getenv("AWS_DYNAMODB_ACCESS_KEY_ID")
-	accessKey := os.Getenv("AWS_DYNAMODB_SECRET_ACCESS_KEY")
+	if dbRegion == "" {
+		log.Fatal("AWS_DYNAMODB_REGION is not set")
+	}
+
+	log.Printf("Initializing DynamoDB client with region: %s", dbRegion)
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithRegion(dbRegion),
-		config.WithEndpointResolver(aws.EndpointResolverFunc(
-			func(service, region string) (aws.Endpoint, error) {
-				if endpoint != "" {
-					return aws.Endpoint{URL: endpoint}, nil
-				}
-				// Fall back to default endpoint resolution
-				return aws.Endpoint{}, &aws.EndpointNotFoundError{}
-			})),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(keyId, accessKey, "")),
 	)
 	if err != nil {
-		log.Fatalf("unable to load SDK config, %v", err)
+		log.Fatalf("Unable to load SDK config: %v", err)
 	}
 
-	// Add client configuration
 	client = dynamodb.NewFromConfig(cfg)
 
-	log.Default().Print("DynamoDB client created")
+	log.Println("DynamoDB client created successfully")
+
+	// Test connection before proceeding
+	hasTable := tableExists()
+
+	log.Printf("Table %s exists: %v", tableName, hasTable)
+
+	if !hasTable {
+		createTableIfNotExists()
+	}
+	// endpoint := os.Getenv("DYNAMO_ENDPOINT")
+	// dbRegion := os.Getenv("AWS_DYNAMODB_REGION")
+	// keyId := os.Getenv("AWS_DYNAMODB_ACCESS_KEY_ID")
+	// accessKey := os.Getenv("AWS_DYNAMODB_SECRET_ACCESS_KEY")
+
+	// cfg, err := config.LoadDefaultConfig(context.TODO(),
+	// 	config.WithRegion(dbRegion),
+	// 	config.WithEndpointResolver(aws.EndpointResolverFunc(
+	// 		func(service, region string) (aws.Endpoint, error) {
+	// 			if endpoint != "" {
+	// 				return aws.Endpoint{URL: endpoint}, nil
+	// 			}
+	// 			// Fall back to default endpoint resolution
+	// 			return aws.Endpoint{}, &aws.EndpointNotFoundError{}
+	// 		})),
+	// 	config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(keyId, accessKey, "")),
+	// )
+	// if err != nil {
+	// 	log.Fatalf("unable to load SDK config, %v", err)
+	// }
+
+	// // Add client configuration
+	// client = dynamodb.NewFromConfig(cfg)
+
+	// log.Default().Print("DynamoDB client created")
 
 	// // Test connection before proceeding
 	// hasTable := tableExists()
