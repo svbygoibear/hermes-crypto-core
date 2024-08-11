@@ -60,6 +60,9 @@ To properly run this project, assuming you already have git installed, you will 
 #### Extra info
 - For multiple versions of Go, have a look here: [Managing Go Installations](https://go.dev/doc/manage-install).
 
+#### Running and Deploying
+TBD
+
 
 ## License
 
