@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy-to-lambda:
     runs-on: ubuntu-latest
@@ -36,5 +40,7 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Deploy to AWS Lambda
+      env:
+          LAMBDA_FUNCTION_NAME: ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}
       run: |
-        aws lambda update-function-code --${{ secrets.AWS_LAMBDA_FUNCTION_NAME }} go-lambda-cicd --zip-file fileb://bootstrap.zip
+        aws lambda update-function-code --$LAMBDA_FUNCTION_NAME go-lambda-cicd --zip-file fileb://bootstrap.zip
