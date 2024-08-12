@@ -71,6 +71,7 @@ First you will need to setup a `.env` file on project root with the following st
 ```
 # .env file
 # This is all your config
+IS_LOCAL=true
 
 GECKO_API_KEY=[your-key-here]
 

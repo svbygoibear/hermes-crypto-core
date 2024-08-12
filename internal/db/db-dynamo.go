@@ -27,9 +27,30 @@ func Init() {
 
 	log.Printf("Initializing DynamoDB client with region: %s", dbRegion)
 
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithRegion(dbRegion),
-	)
+	var cfg aws.Config
+	var err error
+
+	isLocal := os.Getenv("IS_LOCAL")
+	if isLocal == "true" {
+		// Local development configuration
+		customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
+			return aws.Endpoint{
+				URL:           "http://localhost:1433", // Default local DynamoDB port
+				SigningRegion: dbRegion,
+			}, nil
+		})
+
+		cfg, err = config.LoadDefaultConfig(context.TODO(),
+			config.WithRegion(dbRegion),
+			config.WithEndpointResolver(customResolver),
+		)
+	} else {
+		// Production configuration
+		cfg, err = config.LoadDefaultConfig(context.TODO(),
+			config.WithRegion(dbRegion),
+		)
+	}
+
 	if err != nil {
 		log.Fatalf("Unable to load SDK config: %v", err)
 	}
