@@ -19,3 +19,12 @@ type User struct {
 	Email string `json:"email"` // Sort key
 	Votes []Vote `json:"votes"`
 }
+
+type ReturnError struct {
+	ErrorMessage string `json:"error_message"`
+}
+
+// Error implements error.
+func (r ReturnError) Error() string {
+	return r.ErrorMessage
+}

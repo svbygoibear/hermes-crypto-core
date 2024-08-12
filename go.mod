@@ -23,6 +23,7 @@ require (
 )
 
 require (
+	github.com/JulianToledano/goingecko v0.3.0
 	github.com/aws/aws-lambda-go v1.47.0 // indirect
 	github.com/aws/aws-sdk-go v1.55.5
 	github.com/aws/aws-sdk-go-v2 v1.30.3

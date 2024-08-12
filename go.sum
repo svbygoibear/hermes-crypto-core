@@ -1,3 +1,7 @@
+github.com/JulianToledano/goingecko v0.3.0 h1:EXoVzRRNS6QhPcfsx+xSFABCxn9RQacqf/I7mWNJMZg=
+github.com/JulianToledano/goingecko v0.3.0/go.mod h1:oH/2pOWrtVbvgGk3n3rX3+/1wSXm2Pg9Bu8YvxgZkOQ=
+github.com/JulianToledano/goingecko v1.0.1 h1:NV5+X4IqU5XT0jiZALMpk/jGkSlSXmos/VjHkpeIIUw=
+github.com/JulianToledano/goingecko v1.0.1/go.mod h1:AmjWjcyDXqUKq8tLu4avYrGx8x2ZWTpZjaExX6re+us=
 github.com/aws/aws-lambda-go v1.47.0 h1:0H8s0vumYx/YKs4sE7YM0ktwL2eWse+kfopsRI1sXVI=
 github.com/aws/aws-lambda-go v1.47.0/go.mod h1:dpMpZgvWx5vuQJfBt0zqBha60q7Dd7RfgJv23DymV8A=
 github.com/aws/aws-sdk-go v1.55.5 h1:KKUZBfBoyqy5d3swXyiC7Q76ic40rYcbqH7qjh59kzU=
