@@ -75,15 +75,15 @@ func TestGetUsers(t *testing.T) {
 	assert.Equal(t, mockUsers, response)
 }
 
-func TestGetUserAndVotes(t *testing.T) {
+func TestGetUser(t *testing.T) {
 	r, mockDB := setupTestRouter()
-	r.GET("/users/:id/vote", GetUserAndVotes)
+	r.GET("/users/:id", GetUser)
 
 	mockUser := &models.User{Id: "1", Name: "Test User"}
 	mockDB.On("GetUserByID", "1").Return(mockUser, nil)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/users/1/vote", nil)
+	req, _ := http.NewRequest("GET", "/users/1", nil)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
@@ -93,16 +93,17 @@ func TestGetUserAndVotes(t *testing.T) {
 	assert.Equal(t, *mockUser, response)
 }
 
-func TestCreateUserAndVotes(t *testing.T) {
+func TestCreateUser(t *testing.T) {
 	r, mockDB := setupTestRouter()
-	r.POST("/users/vote", CreateUserAndVotes)
+	r.POST("/users", CreateUser)
 
-	newUser := models.User{Name: "New User"}
+	newUser := models.User{Name: "New User", Email: "test@test.com"}
+	mockDB.On("GetUserByEmail", newUser.Email).Return(&newUser, nil)
 	mockDB.On("CreateUser", newUser).Return(&newUser, nil)
 
 	w := httptest.NewRecorder()
 	body, _ := json.Marshal(newUser)
-	req, _ := http.NewRequest("POST", "/users/vote", bytes.NewBuffer(body))
+	req, _ := http.NewRequest("POST", "/users", bytes.NewBuffer(body))
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 201, w.Code)

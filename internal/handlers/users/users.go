@@ -1,6 +1,7 @@
 package users
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,10 +21,8 @@ func GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-// GetUserAndVotes handles GET requests to retrieve a specific user (by id) & their votes
-// it will also check the latest vote result if 60 seconds have passed since the last vote
-// and update the result if necessary
-func GetUserAndVotes(c *gin.Context) {
+// GetUser handles GET requests to retrieve a specific user (by id)
+func GetUser(c *gin.Context) {
 	id := c.Param("id")
 	user, err := db.DB.GetUserByID(id)
 	if err != nil {
@@ -33,15 +32,29 @@ func GetUserAndVotes(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// CreateUserAndVotes handles POST requests to create a new user including votes
-// if there are any to create
-func CreateUserAndVotes(c *gin.Context) {
+// CreateUser handles POST requests to create a new user
+func CreateUser(c *gin.Context) {
 	var newUser models.User
 	id := uuid.New() // Generate a new UUID for the user
 	if err := c.ShouldBindJSON(&newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Printf("Checking to see if user already exists by email: %v", newUser.Email)
+	// Check if user already exists by email
+	user, err := db.DB.GetUserByEmail(newUser.Email)
+	if err != nil {
+		log.Printf("Error getting user by email: %v", err)
+	}
+	log.Printf("We continue on at this point")
+	// If user already exists, return the existing user
+	if user != nil {
+		c.JSON(http.StatusCreated, user)
+		return
+	}
+	log.Printf("We have no user, thus we move")
+
+	// If user does not exist, create a new user
 	newUser.Id = id.String()
 	createdUser, err := db.DB.CreateUser(newUser)
 	if err != nil {

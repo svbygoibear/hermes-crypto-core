@@ -171,11 +171,11 @@ func (d *dynamoDB) GetUserByID(id string) (*models.User, error) {
 }
 
 // GetUserByID retrieves a specific user by Email
-func (d *dynamoDB) GetUserByEmail(id string) (*models.User, error) {
+func (d *dynamoDB) GetUserByEmail(email string) (*models.User, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]types.AttributeValue{
-			"Email": &types.AttributeValueMemberS{Value: id},
+			"Email": &types.AttributeValueMemberS{Value: email},
 		},
 	}
 

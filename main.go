@@ -39,10 +39,19 @@ func init() {
 	r.Use(middleware.RecoverMiddleware())
 
 	// Routes for the users API
+	// Health check
 	r.GET("users/health", users.HealthCheck)
+
+	// Users base
 	r.GET("users", users.GetUsers)
-	r.GET("users/:id/vote", users.GetUserAndVotes)
-	r.POST("users/vote", users.CreateUserAndVotes)
+	r.GET("users/:id", users.GetUser)
+	r.POST("users", users.CreateUser)
+	r.DELETE("users/:id", users.DeleteUser)
+
+	// Votes of users
+	r.GET("users/:id/vote", users.GetUserVotes)
+	r.GET("users/:id/vote/result", users.GetLastUserVoteResult)
+	r.POST("users/vote", users.CreateUserVote)
 
 	// Set up the Lambda proxy
 	ginLambda = ginadapter.New(r)
