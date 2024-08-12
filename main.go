@@ -8,7 +8,6 @@ import (
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
 	"github.com/gin-gonic/gin"
 
-	"hermes-crypto-core/internal/coin"
 	"hermes-crypto-core/internal/db"
 	"hermes-crypto-core/internal/handlers/users"
 	"hermes-crypto-core/internal/middleware"
@@ -27,21 +26,12 @@ func init() {
 	// DB initialization
 	db.Init()
 
-	currentExchangeRate, err := coin.GetCurrentExchangeRate()
-	if err != nil {
-		log.Fatalf("Error getting current exchange rate: %v", err)
-	}
-	log.Printf("Current exchange rate: %f", *currentExchangeRate)
-
 	// Set up Gin
 	r := gin.Default()
 	// Add middleware for panic recovery
 	r.Use(middleware.RecoverMiddleware())
 
 	// Routes for the users API
-	// Health check
-	r.GET("users/health", users.HealthCheck)
-
 	// Users base
 	r.GET("users", users.GetUsers)
 	r.GET("users/:id", users.GetUser)
@@ -49,9 +39,12 @@ func init() {
 	r.DELETE("users/:id", users.DeleteUser)
 
 	// Votes of users
-	r.GET("users/:id/vote", users.GetUserVotes)
-	r.GET("users/:id/vote/result", users.GetLastUserVoteResult)
-	r.POST("users/vote", users.CreateUserVote)
+	r.GET("users/:id/votes", users.GetUserVotes)
+	r.POST("users/:id/votes", users.CreateUserVote)
+	r.GET("users/:id/votes/result", users.GetLastUserVoteResult)
+
+	// Health check
+	r.GET("users/health", users.HealthCheck)
 
 	// Set up the Lambda proxy
 	ginLambda = ginadapter.New(r)

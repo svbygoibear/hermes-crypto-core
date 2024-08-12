@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
+	"hermes-crypto-core/internal/coin"
 	"hermes-crypto-core/internal/db"
 	"hermes-crypto-core/internal/models"
 )
@@ -19,8 +20,8 @@ func GetUserVotes(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Users not found"})
 		return
 	}
-	// TODO: marshal user votes
-	c.JSON(http.StatusOK, user)
+
+	c.JSON(http.StatusOK, user.Votes)
 }
 
 // GetLastUserVoteResult handles GET requests to retrieve the specified (by id) user's last vote result
@@ -32,6 +33,13 @@ func GetLastUserVoteResult(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Users not found"})
 		return
 	}
+
+	currentExchangeRate, err := coin.GetCurrentExchangeRate()
+	if err != nil {
+		log.Fatalf("Error getting current exchange rate: %v", err)
+	}
+	log.Printf("Current exchange rate: %f", *currentExchangeRate)
+
 	// TODO: marshal user votes
 	c.JSON(http.StatusOK, user)
 }
