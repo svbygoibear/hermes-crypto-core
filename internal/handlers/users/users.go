@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
+	con "hermes-crypto-core/internal/constants"
 	"hermes-crypto-core/internal/db"
 	"hermes-crypto-core/internal/models"
 )
@@ -26,7 +27,7 @@ func GetUser(c *gin.Context) {
 	id := c.Param("id")
 	user, err := db.DB.GetUserByID(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Users not found", "message": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": con.USER_NOT_FOUND, "message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, user)

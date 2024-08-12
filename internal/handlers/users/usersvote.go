@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"hermes-crypto-core/internal/coin"
+	con "hermes-crypto-core/internal/constants"
 	"hermes-crypto-core/internal/db"
 	"hermes-crypto-core/internal/models"
 )
@@ -18,7 +19,7 @@ func GetUserVotesById(c *gin.Context) {
 	id := c.Param("id")
 	user, err := db.DB.GetUserByID(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": con.USER_NOT_FOUND})
 		return
 	}
 
@@ -31,7 +32,7 @@ func GetLastUserVoteResult(c *gin.Context) {
 	id := c.Param("id")
 	user, err := db.DB.GetUserByID(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found", "message": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": con.USER_NOT_FOUND, "message": err.Error()})
 		return
 	}
 
@@ -76,13 +77,10 @@ func GetLastUserVoteResult(c *gin.Context) {
 		// Update the user with the new vote
 		updatedUser, err := db.DB.UpdateUser(id, *user)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user vote", "message": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": con.USER_VOTE_UPDATE_FAILED, "message": err.Error()})
 			return
 		}
-
 		log.Printf("Updated user vote for %v", updatedUser)
-
-		log.Printf("Updated user vote for %v", latestVote)
 
 		// Return the updated vote
 		c.JSON(http.StatusOK, latestVote)
@@ -107,7 +105,7 @@ func CreateUserVote(c *gin.Context) {
 	user, err := db.DB.GetUserByID(id)
 	// If user does not exist, return an error since we can't add a vote to a non-existent user
 	if err != nil || user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found", "message": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": con.USER_NOT_FOUND, "message": err.Error()})
 		return
 	}
 
@@ -144,7 +142,7 @@ func CreateUserVote(c *gin.Context) {
 	// Update the user with the extra votes
 	updatedUser, err := db.DB.UpdateUser(id, *user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user votes", "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": con.USER_VOTE_UPDATE_FAILED, "message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusCreated, updatedUser.Votes)
