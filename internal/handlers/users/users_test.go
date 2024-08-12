@@ -63,7 +63,9 @@ func TestGetUsers(t *testing.T) {
 	r, mockDB := setupTestRouter()
 	r.GET("/users", GetUsers)
 
-	mockUsers := []models.User{{Id: "1", Name: "Test User"}}
+	mockUsers := []models.User{
+		{Id: "1", Name: "Test User", Email: "test@test.com", Votes: []models.Vote{
+			{VoteDirection: "up", CoinValue: 0.5, CoinValueAtVote: 0.5, CoinValueCurrency: "usd", VoteCoin: "bitcoin", VoteDateTime: models.TimestampTime{time.Time{}}}}}}
 	mockDB.On("GetAllUsers").Return(mockUsers, nil)
 
 	w := httptest.NewRecorder()

@@ -20,7 +20,7 @@ var ginLambda *ginadapter.GinLambda
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Default().Println("Error loading .env file")
+		log.Default().Println("Could not load .env file, using environment variables.")
 	}
 
 	// DB initialization

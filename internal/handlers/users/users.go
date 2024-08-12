@@ -15,7 +15,7 @@ import (
 func GetUsers(c *gin.Context) {
 	users, err := db.DB.GetAllUsers()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve users"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve users", "message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, users)
