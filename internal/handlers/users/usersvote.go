@@ -121,6 +121,14 @@ func CreateUserVote(c *gin.Context) {
 		}
 	}
 
+	currentExchangeRate, err := coin.GetCurrentExchangeRate()
+	if err != nil {
+		c.JSON(http.StatusFailedDependency, gin.H{"error": "Could not determine current exchange rate"})
+		return
+	}
+	// Set the current exchange rate as the value of the coin at the time of the vote
+	newVote.CoinValueAtVote = *currentExchangeRate
+
 	// If there is no ongoing vote, create a new vote
 	user.Votes = append(user.Votes, newVote)
 
