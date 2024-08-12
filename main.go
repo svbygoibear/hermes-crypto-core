@@ -8,6 +8,7 @@ import (
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
 	"github.com/gin-gonic/gin"
 
+	"hermes-crypto-core/internal/coin"
 	"hermes-crypto-core/internal/db"
 	"hermes-crypto-core/internal/handlers/users"
 	"hermes-crypto-core/internal/middleware"
@@ -25,6 +26,12 @@ func init() {
 
 	// DB initialization
 	db.Init()
+
+	currentExchangeRate, err := coin.GetCurrentExchangeRate()
+	if err != nil {
+		log.Fatalf("Error getting current exchange rate: %v", err)
+	}
+	log.Printf("Current exchange rate: %f", *currentExchangeRate)
 
 	// Set up Gin
 	r := gin.Default()
