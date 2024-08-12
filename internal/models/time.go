@@ -45,3 +45,7 @@ func (t *TimestampTime) UnmarshalDynamoDBAttributeValue(av types.AttributeValue)
 		return fmt.Errorf("unsupported AttributeValue type: %T", av)
 	}
 }
+
+func (t TimestampTime) MarshalDynamoDBAttributeValue() (types.AttributeValue, error) {
+	return &types.AttributeValueMemberS{Value: t.Format(time.RFC3339)}, nil
+}
