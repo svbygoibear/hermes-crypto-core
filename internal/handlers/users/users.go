@@ -26,7 +26,7 @@ func GetUser(c *gin.Context) {
 	id := c.Param("id")
 	user, err := db.DB.GetUserByID(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Users not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Users not found", "message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, user)
@@ -58,7 +58,7 @@ func CreateUser(c *gin.Context) {
 	newUser.Id = id.String()
 	createdUser, err := db.DB.CreateUser(newUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user", "message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusCreated, createdUser)
@@ -75,7 +75,7 @@ func UpdateUser(c *gin.Context) {
 
 	user, err := db.DB.UpdateUser(id, updatedUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user", "message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, user)
@@ -85,7 +85,7 @@ func UpdateUser(c *gin.Context) {
 func DeleteUser(c *gin.Context) {
 	id := c.Param("id")
 	if err := db.DB.DeleteUser(id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user", "message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "User successfully deleted"})

@@ -31,7 +31,7 @@ func GetLastUserVoteResult(c *gin.Context) {
 	id := c.Param("id")
 	user, err := db.DB.GetUserByID(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found", "message": err.Error()})
 		return
 	}
 
@@ -52,7 +52,7 @@ func GetLastUserVoteResult(c *gin.Context) {
 		// If the vote is not recent, we need to check the exchange rate and update the vote
 		currentExchangeRate, err := coin.GetCurrentExchangeRate()
 		if err != nil {
-			c.JSON(http.StatusFailedDependency, gin.H{"error": "Could not determine current exchange rate"})
+			c.JSON(http.StatusFailedDependency, gin.H{"error": "Could not determine current exchange rate", "message": err.Error()})
 			return
 		}
 		latestVote.CoinValue = *currentExchangeRate
@@ -70,7 +70,7 @@ func GetLastUserVoteResult(c *gin.Context) {
 		// Update the user with the new vote
 		updatedUser, err := db.DB.UpdateUser(id, *user)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user vote"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user vote", "message": err.Error()})
 			return
 		}
 
@@ -99,7 +99,7 @@ func CreateUserVote(c *gin.Context) {
 	user, err := db.DB.GetUserByID(id)
 	// If user does not exist, return an error since we can't add a vote to a non-existent user
 	if err != nil || user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found", "message": err.Error()})
 		return
 	}
 
@@ -135,7 +135,7 @@ func CreateUserVote(c *gin.Context) {
 	// Update the user with the extra votes
 	updatedUser, err := db.DB.UpdateUser(id, *user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user votes"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user votes", "message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusCreated, updatedUser.Votes)
