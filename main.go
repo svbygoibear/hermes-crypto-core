@@ -29,7 +29,7 @@ func init() {
 	// Set up Gin
 	r := gin.Default()
 	// Add middleware for panic recovery
-	r.Use(middleware.RecoverMiddleware())
+	r.Use(middleware.RecoverMiddleware(), middleware.CORSMiddleware())
 
 	// Routes for the users API
 
