@@ -178,15 +178,39 @@ func TestGetUserLastVoteResult(t *testing.T) {
 
 	voteDateTime1, _ := time.Parse(time.RFC3339, "2023-10-12T07:20:50.52Z")
 	voteDateTime2, _ := time.Parse(time.RFC3339, "2024-01-01T07:20:50.52Z")
-	mockUser := &models.User{Id: "1", Name: "Test User", Votes: []models.Vote{
-		{VoteDirection: "up", VoteDateTime: models.TimestampTime{Time: voteDateTime1}},
-		{VoteDirection: "down", VoteDateTime: models.TimestampTime{Time: voteDateTime2}}},
+	mockUser := &models.User{Id: "18890123000123", Name: "Test User", Email: "test@gmail.com", Votes: []models.Vote{
+		{VoteDirection: "up", CoinValue: 59760, CoinValueAtVote: 45234, CoinValueCurrency: "USD", VoteCoin: "bitcoin", VoteDateTime: models.TimestampTime{Time: voteDateTime1}},
+		{VoteDirection: "down", CoinValue: 59760, CoinValueAtVote: 45234, CoinValueCurrency: "USD", VoteCoin: "bitcoin", VoteDateTime: models.TimestampTime{Time: voteDateTime2}}},
 	}
-	mockDB.On("GetUserByID", "1").Return(mockUser, nil)
-	mockDB.On("UpdateUser", "1", *mockUser).Return(mockUser, nil)
+	mockDB.On("GetUserByID", "18890123000123").Return(mockUser, nil)
+	mockDB.On("UpdateUser", "18890123000123", *mockUser).Return(mockUser, nil)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/users/1/votes/result", nil)
+	req, _ := http.NewRequest("GET", "/users/18890123000123/votes/result", nil)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	var response models.Vote
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	assert.Nil(t, err)
+	assert.NotEqual(t, *&mockUser.Votes[1], response)
+}
+
+func TestGetUserLastVoteResultNoValue(t *testing.T) {
+	r, mockDB := setupTestRouter()
+	r.GET("/users/:id/votes/result", GetLastUserVoteResult)
+
+	voteDateTime1, _ := time.Parse(time.RFC3339, "2023-10-12T07:20:50.52Z")
+	voteDateTime2, _ := time.Parse(time.RFC3339, "2024-01-01T19:30:50.52Z")
+	mockUser := &models.User{Id: "18890123000123", Name: "Test User", Email: "test@gmail.com", Votes: []models.Vote{
+		{VoteDirection: "up", CoinValue: 59760, CoinValueAtVote: 45234, CoinValueCurrency: "USD", VoteCoin: "bitcoin", VoteDateTime: models.TimestampTime{Time: voteDateTime1}},
+		{VoteDirection: "down", CoinValue: 0, CoinValueAtVote: 45234, CoinValueCurrency: "USD", VoteCoin: "bitcoin", VoteDateTime: models.TimestampTime{Time: voteDateTime2}}},
+	}
+	mockDB.On("GetUserByID", "18890123000123").Return(mockUser, nil)
+	mockDB.On("UpdateUser", "18890123000123", *mockUser).Return(mockUser, nil)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/users/18890123000123/votes/result", nil)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)

@@ -42,9 +42,15 @@ func GetLastUserVoteResult(c *gin.Context) {
 
 	log.Default().Println("Latest vote=", latestVote)
 	if latestVote != nil {
-		isRecent := time.Since(latestVote.VoteDateTime.Time) < 60*time.Second
-		log.Default().Println("Is recent=", isRecent)
-		if isRecent {
+		isYoungerThanTimeout := time.Since(latestVote.VoteDateTime.Time) < 60*time.Second
+		log.Default().Println("Is recent=", isYoungerThanTimeout)
+		if isYoungerThanTimeout {
+			c.JSON(http.StatusOK, latestVote)
+			return
+		}
+
+		// We have a coin value - it is all fine
+		if latestVote.CoinValue != 0 {
 			c.JSON(http.StatusOK, latestVote)
 			return
 		}
@@ -74,7 +80,9 @@ func GetLastUserVoteResult(c *gin.Context) {
 			return
 		}
 
-		log.Printf("Updated user vote for %v", updatedUser.Id)
+		log.Printf("Updated user vote for %v", updatedUser)
+
+		log.Printf("Updated user vote for %v", latestVote)
 
 		// Return the updated vote
 		c.JSON(http.StatusOK, latestVote)
@@ -128,6 +136,7 @@ func CreateUserVote(c *gin.Context) {
 	}
 	// Set the current exchange rate as the value of the coin at the time of the vote
 	newVote.CoinValueAtVote = *currentExchangeRate
+	newVote.VoteDateTime = models.TimestampTime{Time: time.Now()}
 
 	// If there is no ongoing vote, create a new vote
 	user.Votes = append(user.Votes, newVote)

@@ -4,6 +4,8 @@ import (
 	"context"
 	"log"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -16,6 +18,10 @@ import (
 
 type dynamoDB struct {
 	client *dynamodb.Client
+}
+
+type TimestampTime struct {
+	time.Time
 }
 
 var client *dynamodb.Client
@@ -123,6 +129,21 @@ func createTableIfNotExists() {
 	}
 }
 
+func (t TimestampTime) MarshalDynamoDBAttributeValue() (types.AttributeValue, error) {
+	return &types.AttributeValueMemberS{Value: t.Format(time.RFC3339)}, nil
+}
+
+func buildUpdateExpression(av map[string]types.AttributeValue) *string {
+	var sets []string
+	for k := range av {
+		if k != "Id" && k != "Email" {
+			sets = append(sets, k+" = :"+k)
+		}
+	}
+	expr := "SET " + strings.Join(sets, ", ")
+	return &expr
+}
+
 // GetAllUsers retrieves all users from the DynamoDB table
 func (d *dynamoDB) GetAllUsers() ([]models.User, error) {
 	input := &dynamodb.ScanInput{
@@ -202,42 +223,101 @@ func (d *dynamoDB) GetUserByEmail(email string) (*models.User, error) {
 
 // CreateUser creates a new user entry in the DynamoDB table
 func (d *dynamoDB) CreateUser(user models.User) (*models.User, error) {
+	// av, err := attributevalue.MarshalMap(user)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// input := &dynamodb.PutItemInput{
+	// 	TableName: aws.String(tableName),
+	// 	Item:      av,
+	// }
+
+	// _, err = client.PutItem(context.TODO(), input)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return &user, nil
 	av, err := attributevalue.MarshalMap(user)
 	if err != nil {
 		return nil, err
 	}
 
 	input := &dynamodb.PutItemInput{
-		TableName: aws.String(tableName),
-		Item:      av,
+		TableName:    aws.String(tableName),
+		Item:         av,
+		ReturnValues: types.ReturnValueAllOld,
 	}
 
-	_, err = client.PutItem(context.TODO(), input)
+	result, err := d.client.PutItem(context.TODO(), input)
 	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	// If the item was new (not an update), result.Attributes will be empty
+	// In this case, we can just return the original user
+	if len(result.Attributes) == 0 {
+		return &user, nil
+	}
+
+	// If there were any attributes returned (which shouldn't happen for a new item,
+	// but just in case), unmarshal them into a new User struct
+	var createdUser models.User
+	err = attributevalue.UnmarshalMap(result.Attributes, &createdUser)
+	if err != nil {
+		return nil, err
+	}
+
+	return &createdUser, nil
 }
 
 // UpdateUser updates an existing user in the DynamoDB table, using their user Id
 func (d *dynamoDB) UpdateUser(id string, user models.User) (*models.User, error) {
+	// av, err := attributevalue.MarshalMap(user)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// input := &dynamodb.PutItemInput{
+	// 	TableName: aws.String(tableName),
+	// 	Item:      av,
+	// }
+
+	// _, err = client.PutItem(context.TODO(), input)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return &user, nil
 	av, err := attributevalue.MarshalMap(user)
 	if err != nil {
 		return nil, err
 	}
 
-	input := &dynamodb.PutItemInput{
+	input := &dynamodb.UpdateItemInput{
 		TableName: aws.String(tableName),
-		Item:      av,
+		Key: map[string]types.AttributeValue{
+			"Id":    &types.AttributeValueMemberS{Value: user.Id},
+			"Email": &types.AttributeValueMemberS{Value: user.Email},
+		},
+		ExpressionAttributeValues: av,
+		UpdateExpression:          buildUpdateExpression(av),
+		ReturnValues:              types.ReturnValueAllNew,
 	}
 
-	_, err = client.PutItem(context.TODO(), input)
+	result, err := d.client.UpdateItem(context.TODO(), input)
 	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	var updatedUser models.User
+	err = attributevalue.UnmarshalMap(result.Attributes, &updatedUser)
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedUser, nil
 }
 
 // DeleteUser removes a user from the DynamoDB table
