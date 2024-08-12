@@ -147,8 +147,8 @@ func (d *dynamoDB) GetAllUsers() ([]models.User, error) {
 func (d *dynamoDB) GetUserByID(id string) (*models.User, error) {
 	// This is not an ideal solution - this should be optimized in future
 	input := &dynamodb.QueryInput{
-		TableName:              aws.String(tableName),
-		KeyConditionExpression: aws.String("Id = :Id"),
+		TableName: aws.String(tableName),
+		// KeyConditionExpression: aws.String("Id = :Id"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":Id": &types.AttributeValueMemberS{Value: id},
 		},
