@@ -145,24 +145,27 @@ func (d *dynamoDB) GetAllUsers() ([]models.User, error) {
 
 // GetUserByID retrieves a specific user by Id
 func (d *dynamoDB) GetUserByID(id string) (*models.User, error) {
-	input := &dynamodb.GetItemInput{
-		TableName: aws.String(tableName),
-		Key: map[string]types.AttributeValue{
-			"Id": &types.AttributeValueMemberS{Value: id},
+	// This is not an ideal solution - this should be optimized in future
+	input := &dynamodb.QueryInput{
+		TableName:              aws.String(tableName),
+		KeyConditionExpression: aws.String("id = :id"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":Id": &types.AttributeValueMemberS{Value: id},
 		},
+		Limit: aws.Int32(1), // We only need one item
 	}
 
-	result, err := client.GetItem(context.TODO(), input)
+	result, err := client.Query(context.TODO(), input)
 	if err != nil {
 		return nil, err
 	}
 
-	if result.Item == nil {
+	if len(result.Items) == 0 {
 		return nil, nil // User not found
 	}
 
 	var user models.User
-	err = attributevalue.UnmarshalMap(result.Item, &user)
+	err = attributevalue.UnmarshalMap(result.Items[0], &user)
 	if err != nil {
 		return nil, err
 	}
