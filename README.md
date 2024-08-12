@@ -37,7 +37,7 @@ Under the hood, I am powered by;
 
 -   [Gin](https://gin-gonic.com/): Gin is a fast, easy to use web-framework perfect for crafting APIs at scale!
 -   [Golang](https://go.dev/): Go is an open-source programming language that is easy to learn, has tons of libraries and is well used and loved.
--   [DynamoDB](https://aws.amazon.com/pm/dynamodb/?gclid=Cj0KCQjwwuG1BhCnARIsAFWBUC2rKB9_2LwJA7ornNVDCMoK519wOKVKusZJtwk-hEHraZBI_hYHYHMaAs-NEALw_wcB&trk=bf64c969-685f-4fc4-b36b-4bcbda56cee7&sc_channel=ps&ef_id=Cj0KCQjwwuG1BhCnARIsAFWBUC2rKB9_2LwJA7ornNVDCMoK519wOKVKusZJtwk-hEHraZBI_hYHYHMaAs-NEALw_wcB:G:s&s_kwcid=AL!4422!3!536324221335!e!!g!!dynamodb!12195830303!119606857560): Following the theme of easy and lightweight, this project makes use of  DynamoDB to keep track of any info.
+-   [DynamoDB](https://aws.amazon.com/pm/dynamodb): Following the theme of easy and lightweight, this project makes use of  DynamoDB to keep track of any info.
 
 # Installation
 
@@ -61,7 +61,31 @@ To properly run this project, assuming you already have git installed, you will 
 - For multiple versions of Go, have a look here: [Managing Go Installations](https://go.dev/doc/manage-install).
 
 #### Running and Deploying
-TBD
+There are a few extra steps before getting this project up and running, so follow these steps to do so seamlessly. There is some assumption that you already know how to use go and how to use AWS. Refer to any of the link to help get started if that is not the case.
+
+##### CoinGecko
+To fetch crypto related data, we are currently connected to [`CoinGecko`](https://www.coingecko.com/). You will need to create a free account when testing this locally and replace the `GECKO_API_KEY` environment variable with the API Key from your account.
+
+##### Run locally
+First you will need to setup a `.env` file on project root with the following structure, adding your own values where needed:
+```
+# .env file
+# This is all your config
+
+GECKO_API_KEY=[your-key-here]
+
+AWS_DYNAMODB_REGION=[your-region-here]
+```
+Keep in mind this will not be committed as part of your code.
+
+#### Setup Environment
+This is where the `Makefile` will come in handy. Depending on if you are on a windows machine (or not - note windows functionality is the only one that has been tested); you can run;
+```
+make build-windows
+```
+This will build (and zip) this project as well as kick off a local dynamodb database for you to work with. Some info on this:
+- The zip file can directly be uploaded to [AWS Lambda](https://aws.amazon.com/pm/lambda), with a function configured as a REST API with all your environment variables and roles setup to deploy this manually.
+- It also creates your database, which you can connect on your database GUI using `localhost` and port `1433`.
 
 
 ## License

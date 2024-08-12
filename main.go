@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
@@ -9,11 +11,18 @@ import (
 	"hermes-crypto-core/internal/db"
 	"hermes-crypto-core/internal/handlers/users"
 	"hermes-crypto-core/internal/middleware"
+
+	"github.com/joho/godotenv"
 )
 
 var ginLambda *ginadapter.GinLambda
 
 func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Default().Println("Error loading .env file")
+	}
+
 	// DB initialization
 	db.Init()
 
