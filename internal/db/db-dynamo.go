@@ -14,6 +14,10 @@ import (
 	"hermes-crypto-core/internal/models"
 )
 
+type dynamoDB struct {
+	client *dynamodb.Client
+}
+
 var client *dynamodb.Client
 
 const tableName = "hermes-crypto-users"
@@ -56,6 +60,7 @@ func Init() {
 	}
 
 	client = dynamodb.NewFromConfig(cfg)
+	DB = &dynamoDB{client: client}
 
 	log.Println("DynamoDB client created successfully")
 
@@ -119,7 +124,7 @@ func createTableIfNotExists() {
 }
 
 // GetAllUsers retrieves all users from the DynamoDB table
-func GetAllUsers() ([]models.User, error) {
+func (d *dynamoDB) GetAllUsers() ([]models.User, error) {
 	input := &dynamodb.ScanInput{
 		TableName: aws.String(tableName),
 	}
@@ -139,7 +144,7 @@ func GetAllUsers() ([]models.User, error) {
 }
 
 // GetUserByID retrieves a specific user by Id
-func GetUserByID(id string) (*models.User, error) {
+func (d *dynamoDB) GetUserByID(id string) (*models.User, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]types.AttributeValue{
@@ -166,7 +171,7 @@ func GetUserByID(id string) (*models.User, error) {
 }
 
 // GetUserByID retrieves a specific user by Email
-func GetUserByEmail(id string) (*models.User, error) {
+func (d *dynamoDB) GetUserByEmail(id string) (*models.User, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]types.AttributeValue{
@@ -193,7 +198,7 @@ func GetUserByEmail(id string) (*models.User, error) {
 }
 
 // CreateUser creates a new user entry in the DynamoDB table
-func CreateUser(user models.User) (*models.User, error) {
+func (d *dynamoDB) CreateUser(user models.User) (*models.User, error) {
 	av, err := attributevalue.MarshalMap(user)
 	if err != nil {
 		return nil, err
@@ -213,7 +218,7 @@ func CreateUser(user models.User) (*models.User, error) {
 }
 
 // UpdateUser updates an existing user in the DynamoDB table, using their user Id
-func UpdateUser(id string, user models.User) (*models.User, error) {
+func (d *dynamoDB) UpdateUser(id string, user models.User) (*models.User, error) {
 	av, err := attributevalue.MarshalMap(user)
 	if err != nil {
 		return nil, err
@@ -233,7 +238,7 @@ func UpdateUser(id string, user models.User) (*models.User, error) {
 }
 
 // DeleteUser removes a user from the DynamoDB table
-func DeleteUser(id string) error {
+func (d *dynamoDB) DeleteUser(id string) error {
 	input := &dynamodb.DeleteItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]types.AttributeValue{

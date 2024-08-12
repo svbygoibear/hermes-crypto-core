@@ -9,7 +9,8 @@ type Vote struct {
 	VoteDirection     string        `json:"vote_direction" example:"up" enums:"up,down"`
 	VoteDateTime      TimestampTime `json:"vote_date_time" swaggertype:"primitive,string" example:"2019-10-12T07:20:50.52Z"`
 	VoteCoin          string        `json:"vote_coin" example:"bitcoin"`
-	CoinValue         float64       `json:"coin_value" example:"1000"`
+	CoinValue         float64       `json:"coin_value" example:"58950.000000"`
+	CoinValueAtVote   float64       `json:"coin_value_at_vote" example:"58940.000000"`
 	CoinValueCurrency string        `json:"coin_value_currency" example:"usd"`
 }
 
