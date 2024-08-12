@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -57,6 +58,7 @@ func setupTestRouter() (*gin.Engine, *MockDB) {
 	return r, mockDB
 }
 
+// Users Tests
 func TestGetUsers(t *testing.T) {
 	r, mockDB := setupTestRouter()
 	r.GET("/users", GetUsers)
@@ -147,4 +149,47 @@ func TestDeleteUser(t *testing.T) {
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.Nil(t, err)
 	assert.Equal(t, "User successfully deleted", response["message"])
+}
+
+// Votes Tests
+func TestGetUserVotes(t *testing.T) {
+	r, mockDB := setupTestRouter()
+	r.GET("/users/:id/votes", GetUserVotesById)
+
+	mockUser := &models.User{Id: "1", Name: "Test User", Votes: []models.Vote{{VoteDirection: "up"}, {VoteDirection: "down"}}}
+	mockDB.On("GetUserByID", "1").Return(mockUser, nil)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/users/1/votes", nil)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	var response []models.Vote
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, *&mockUser.Votes, response)
+}
+
+func TestGetUserLastVoteResult(t *testing.T) {
+	r, mockDB := setupTestRouter()
+	r.GET("/users/:id/votes/result", GetLastUserVoteResult)
+
+	voteDateTime1, _ := time.Parse(time.RFC3339, "2023-10-12T07:20:50.52Z")
+	voteDateTime2, _ := time.Parse(time.RFC3339, "2024-01-01T07:20:50.52Z")
+	mockUser := &models.User{Id: "1", Name: "Test User", Votes: []models.Vote{
+		{VoteDirection: "up", VoteDateTime: models.TimestampTime{Time: voteDateTime1}},
+		{VoteDirection: "down", VoteDateTime: models.TimestampTime{Time: voteDateTime2}}},
+	}
+	mockDB.On("GetUserByID", "1").Return(mockUser, nil)
+	mockDB.On("UpdateUser", "1", *mockUser).Return(mockUser, nil)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/users/1/votes/result", nil)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	var response models.Vote
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	assert.Nil(t, err)
+	assert.NotEqual(t, *&mockUser.Votes[1], response)
 }
