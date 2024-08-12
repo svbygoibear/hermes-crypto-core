@@ -214,22 +214,6 @@ func (d *dynamoDB) GetUserByEmail(email string) (*models.User, error) {
 
 // CreateUser creates a new user entry in the DynamoDB table
 func (d *dynamoDB) CreateUser(user models.User) (*models.User, error) {
-	// av, err := attributevalue.MarshalMap(user)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// input := &dynamodb.PutItemInput{
-	// 	TableName: aws.String(tableName),
-	// 	Item:      av,
-	// }
-
-	// _, err = client.PutItem(context.TODO(), input)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// return &user, nil
 	av, err := attributevalue.MarshalMap(user)
 	if err != nil {
 		return nil, err
@@ -265,26 +249,27 @@ func (d *dynamoDB) CreateUser(user models.User) (*models.User, error) {
 
 // UpdateUser updates an existing user in the DynamoDB table, using their user Id
 func (d *dynamoDB) UpdateUser(id string, user models.User) (*models.User, error) {
-	// av, err := attributevalue.MarshalMap(user)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// input := &dynamodb.PutItemInput{
-	// 	TableName: aws.String(tableName),
-	// 	Item:      av,
-	// }
-
-	// _, err = client.PutItem(context.TODO(), input)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// return &user, nil
 	av, err := attributevalue.MarshalMap(user)
 	if err != nil {
 		return nil, err
 	}
+
+	// Remove the key attributes from the update
+	delete(av, "Id")
+	delete(av, "Email")
+
+	updateExp := "SET "
+	expAttrValues := make(map[string]types.AttributeValue)
+	expAttrNames := make(map[string]string)
+
+	for key, value := range av {
+		updateExp += "#" + key + " = :" + key + ", "
+		expAttrValues[":"+key] = value
+		expAttrNames["#"+key] = key
+	}
+
+	// Remove the trailing comma and space
+	updateExp = updateExp[:len(updateExp)-2]
 
 	input := &dynamodb.UpdateItemInput{
 		TableName: aws.String(tableName),
@@ -292,8 +277,9 @@ func (d *dynamoDB) UpdateUser(id string, user models.User) (*models.User, error)
 			"Id":    &types.AttributeValueMemberS{Value: user.Id},
 			"Email": &types.AttributeValueMemberS{Value: user.Email},
 		},
-		ExpressionAttributeValues: av,
-		UpdateExpression:          buildUpdateExpression(av),
+		UpdateExpression:          &updateExp,
+		ExpressionAttributeValues: expAttrValues,
+		ExpressionAttributeNames:  expAttrNames,
 		ReturnValues:              types.ReturnValueAllNew,
 	}
 
