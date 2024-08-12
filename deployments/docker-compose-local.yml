@@ -1,0 +1,18 @@
+version: "3.8"
+
+networks:
+  my-network:
+    name: hermes-crypto-network
+
+services:
+  hermes-crypto-local-dynamodb:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data -port 1433 -cors '*'"
+    image: amazon/dynamodb-local:latest
+    container_name: hermes-crypto-local-dynamodb
+    ports:
+      - "1433:1433"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+    networks:
+      - my-network

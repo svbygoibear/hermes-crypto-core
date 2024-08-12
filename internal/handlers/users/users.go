@@ -1,9 +1,11 @@
 package users
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 
 	"hermes-crypto-core/internal/db"
 	"hermes-crypto-core/internal/models"
@@ -11,7 +13,7 @@ import (
 
 // GetUsers handles GET requests to retrieve all users
 func GetUsers(c *gin.Context) {
-	users, err := db.GetAllUsers()
+	users, err := db.DB.GetAllUsers()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve users"})
 		return
@@ -22,7 +24,7 @@ func GetUsers(c *gin.Context) {
 // GetUser handles GET requests to retrieve a specific user (by id)
 func GetUser(c *gin.Context) {
 	id := c.Param("id")
-	user, err := db.GetUserByID(id)
+	user, err := db.DB.GetUserByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Users not found"})
 		return
@@ -33,12 +35,28 @@ func GetUser(c *gin.Context) {
 // CreateUser handles POST requests to create a new user
 func CreateUser(c *gin.Context) {
 	var newUser models.User
+	id := uuid.New() // Generate a new UUID for the user
 	if err := c.ShouldBindJSON(&newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Printf("Checking to see if user already exists by email: %v", newUser.Email)
+	// Check if user already exists by email
+	user, err := db.DB.GetUserByEmail(newUser.Email)
+	if err != nil {
+		log.Printf("Error getting user by email: %v", err)
+	}
+	log.Printf("We continue on at this point")
+	// If user already exists, return the existing user
+	if user != nil {
+		c.JSON(http.StatusCreated, user)
+		return
+	}
+	log.Printf("We have no user, thus we move")
 
-	createdUser, err := db.CreateUser(newUser)
+	// If user does not exist, create a new user
+	newUser.Id = id.String()
+	createdUser, err := db.DB.CreateUser(newUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
@@ -55,7 +73,7 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := db.UpdateUser(id, updatedUser)
+	user, err := db.DB.UpdateUser(id, updatedUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
 		return
@@ -66,7 +84,7 @@ func UpdateUser(c *gin.Context) {
 // DeleteUser handles DELETE requests to remove a user
 func DeleteUser(c *gin.Context) {
 	id := c.Param("id")
-	if err := db.DeleteUser(id); err != nil {
+	if err := db.DB.DeleteUser(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
 		return
 	}

@@ -1,3 +1,10 @@
 # Build and Test Files
 tests.http
 bin
+.env
+
+# Editor
+.vscode
+
+# Docker
+deployments/docker

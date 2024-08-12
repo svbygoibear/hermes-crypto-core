@@ -14,6 +14,10 @@ import (
 	"hermes-crypto-core/internal/models"
 )
 
+type dynamoDB struct {
+	client *dynamodb.Client
+}
+
 var client *dynamodb.Client
 
 const tableName = "hermes-crypto-users"
@@ -27,14 +31,36 @@ func Init() {
 
 	log.Printf("Initializing DynamoDB client with region: %s", dbRegion)
 
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithRegion(dbRegion),
-	)
+	var cfg aws.Config
+	var err error
+
+	isLocal := os.Getenv("IS_LOCAL")
+	if isLocal == "true" {
+		// Local development configuration
+		customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
+			return aws.Endpoint{
+				URL:           "http://localhost:1433", // Default local DynamoDB port
+				SigningRegion: dbRegion,
+			}, nil
+		})
+
+		cfg, err = config.LoadDefaultConfig(context.TODO(),
+			config.WithRegion(dbRegion),
+			config.WithEndpointResolver(customResolver),
+		)
+	} else {
+		// Production configuration
+		cfg, err = config.LoadDefaultConfig(context.TODO(),
+			config.WithRegion(dbRegion),
+		)
+	}
+
 	if err != nil {
 		log.Fatalf("Unable to load SDK config: %v", err)
 	}
 
 	client = dynamodb.NewFromConfig(cfg)
+	DB = &dynamoDB{client: client}
 
 	log.Println("DynamoDB client created successfully")
 
@@ -98,7 +124,7 @@ func createTableIfNotExists() {
 }
 
 // GetAllUsers retrieves all users from the DynamoDB table
-func GetAllUsers() ([]models.User, error) {
+func (d *dynamoDB) GetAllUsers() ([]models.User, error) {
 	input := &dynamodb.ScanInput{
 		TableName: aws.String(tableName),
 	}
@@ -118,7 +144,7 @@ func GetAllUsers() ([]models.User, error) {
 }
 
 // GetUserByID retrieves a specific user by Id
-func GetUserByID(id string) (*models.User, error) {
+func (d *dynamoDB) GetUserByID(id string) (*models.User, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]types.AttributeValue{
@@ -145,11 +171,11 @@ func GetUserByID(id string) (*models.User, error) {
 }
 
 // GetUserByID retrieves a specific user by Email
-func GetUserByEmail(id string) (*models.User, error) {
+func (d *dynamoDB) GetUserByEmail(email string) (*models.User, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]types.AttributeValue{
-			"Email": &types.AttributeValueMemberS{Value: id},
+			"Email": &types.AttributeValueMemberS{Value: email},
 		},
 	}
 
@@ -172,7 +198,7 @@ func GetUserByEmail(id string) (*models.User, error) {
 }
 
 // CreateUser creates a new user entry in the DynamoDB table
-func CreateUser(user models.User) (*models.User, error) {
+func (d *dynamoDB) CreateUser(user models.User) (*models.User, error) {
 	av, err := attributevalue.MarshalMap(user)
 	if err != nil {
 		return nil, err
@@ -192,7 +218,7 @@ func CreateUser(user models.User) (*models.User, error) {
 }
 
 // UpdateUser updates an existing user in the DynamoDB table, using their user Id
-func UpdateUser(id string, user models.User) (*models.User, error) {
+func (d *dynamoDB) UpdateUser(id string, user models.User) (*models.User, error) {
 	av, err := attributevalue.MarshalMap(user)
 	if err != nil {
 		return nil, err
@@ -212,7 +238,7 @@ func UpdateUser(id string, user models.User) (*models.User, error) {
 }
 
 // DeleteUser removes a user from the DynamoDB table
-func DeleteUser(id string) error {
+func (d *dynamoDB) DeleteUser(id string) error {
 	input := &dynamodb.DeleteItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]types.AttributeValue{

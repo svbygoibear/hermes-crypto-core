@@ -9,3 +9,6 @@ build-windows:
 	set GOARCH=arm64
 	go build -tags lambda.norpc -o bin/bootstrap main.go
 	tar -acf bin/bootstrap.zip bin/bootstrap
+	docker-compose -f deployments/docker-compose-local.yml up -d --remove-orphans
+
+run-windows: build-windows
