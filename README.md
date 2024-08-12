@@ -11,12 +11,13 @@ This repo contains all the services and core code (and none of the client stuff!
 ```bash
 .
 ├── README.md                   <-- This instructions file
+├── deployments                 <-- This contains files to help setup the environment and database locally.
 ├── internal                    <-- All internal services, routing, middleware, dbs etc
 │   ├── db                      <-- All logic relating to interacting with the underlying database
 │   └── handlers                <-- These are our API handlers - they are the glue that keeps things together
 │   └── middleware              <-- Middleware for our API > in this case error handling
 │   └── models                  <-- All models used throughout this app
-│   └── services                <-- External services code > custom code to interact with external APIs
+│   └── coin                    <-- External services code to interact with Gecko Coin
 └── main.go                     <-- Lambda function code, our entrypoint
 ```
 
