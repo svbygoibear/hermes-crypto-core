@@ -148,7 +148,7 @@ func (d *dynamoDB) GetUserByID(id string) (*models.User, error) {
 	// This is not an ideal solution - this should be optimized in future
 	input := &dynamodb.QueryInput{
 		TableName:              aws.String(tableName),
-		KeyConditionExpression: aws.String("id = :id"),
+		KeyConditionExpression: aws.String("Id = :Id"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":Id": &types.AttributeValueMemberS{Value: id},
 		},
@@ -245,7 +245,7 @@ func (d *dynamoDB) DeleteUser(id string) error {
 	input := &dynamodb.DeleteItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]types.AttributeValue{
-			"ID": &types.AttributeValueMemberS{Value: id},
+			"Id": &types.AttributeValueMemberS{Value: id},
 		},
 	}
 
