@@ -57,6 +57,7 @@ func CreateUser(c *gin.Context) {
 
 	// If user does not exist, create a new user
 	newUser.Id = id.String()
+	newUser.Score = 0
 	createdUser, err := db.DB.CreateUser(newUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user", "message": err.Error()})
@@ -74,7 +75,7 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := db.DB.UpdateUser(id, updatedUser)
+	user, err := db.DB.UpdateUser(id, updatedUser, false)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user", "message": err.Error()})
 		return

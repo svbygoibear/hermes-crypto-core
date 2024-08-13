@@ -13,7 +13,8 @@ func RecoverMiddleware() gin.HandlerFunc {
 			if err := recover(); err != nil {
 				log.Printf("Panic: %v", err)
 				c.JSON(http.StatusInternalServerError, gin.H{
-					"error": "Internal server error",
+					"error":   "Internal server error",
+					"message": err.(string),
 				})
 			}
 		}()
