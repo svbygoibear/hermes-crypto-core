@@ -18,11 +18,11 @@ type Vote struct {
 
 // User is a struct that represents a user with all of their votes
 type User struct {
-	Id    string `json:"id" example:"78712300234"` // Partition key
-	Name  string `json:"name" example:"John Doe"`
-	Email string `json:"email" example:"test@test.com"` // Sort key
-	Score int    `json:"score" example:"0"`
-	Votes []Vote `json:"votes"`
+	Id    string  `json:"id" example:"78712300234"` // Partition key
+	Name  string  `json:"name" example:"John Doe"`
+	Email string  `json:"email" example:"test@test.com"` // Sort key
+	Score float64 `json:"score" example:"0"`
+	Votes []Vote  `json:"votes"`
 }
 
 // CoinResult is a struct that represents the result of a coin query
