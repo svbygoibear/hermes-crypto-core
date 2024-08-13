@@ -6,6 +6,7 @@ import (
 
 	"github.com/JulianToledano/goingecko"
 
+	con "hermes-crypto-core/internal/constants"
 	"hermes-crypto-core/internal/models"
 )
 
@@ -15,7 +16,7 @@ func GetCurrentExchangeRate() (*float64, error) {
 	cgClient := goingecko.NewClient(nil, apiKey)
 	defer cgClient.Close()
 
-	data, err := cgClient.CoinsId("bitcoin", true, true, true, false, false, false)
+	data, err := cgClient.CoinsId(con.COIN_TYPE_BTC, true, true, true, false, false, false)
 	if err != nil {
 		fmt.Print("Something went wrong...")
 		return nil, models.ReturnError{ErrorMessage: "Failed to retrieve data from CoinGecko API"}

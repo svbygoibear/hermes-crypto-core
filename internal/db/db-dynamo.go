@@ -248,7 +248,7 @@ func (d *dynamoDB) CreateUser(user models.User) (*models.User, error) {
 }
 
 // UpdateUser updates an existing user in the DynamoDB table, using their user Id
-func (d *dynamoDB) UpdateUser(id string, user models.User) (*models.User, error) {
+func (d *dynamoDB) UpdateUser(id string, user models.User, updateScore bool) (*models.User, error) {
 	av, err := attributevalue.MarshalMap(user)
 	if err != nil {
 		return nil, err
@@ -257,6 +257,9 @@ func (d *dynamoDB) UpdateUser(id string, user models.User) (*models.User, error)
 	// Remove the key attributes from the update
 	delete(av, "Id")
 	delete(av, "Email")
+	if !updateScore {
+		delete(av, "Score")
+	}
 
 	updateExp := "SET "
 	expAttrValues := make(map[string]types.AttributeValue)

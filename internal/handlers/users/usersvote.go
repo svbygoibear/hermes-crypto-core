@@ -27,7 +27,7 @@ func GetUserVotesById(c *gin.Context) {
 }
 
 // GetLastUserVoteResult handles GET requests to retrieve the specified (by id) user's last vote result
-// If there is a result, we update this here as well
+// If there is a result, we update this here as well with the users score
 func GetLastUserVoteResult(c *gin.Context) {
 	id := c.Param("id")
 	user, err := db.DB.GetUserByID(id)
@@ -74,8 +74,29 @@ func GetLastUserVoteResult(c *gin.Context) {
 			}
 		}
 
+		// Update the user score
+		currentUserScore := user.Score
+		// If the value at vote is higher than the current value, then the value dropped
+		didCoinValueDrop := latestVote.CoinValueAtVote > latestVote.CoinValue
+		// Now determine how the user score should be updated given their last vote direction
+		if didCoinValueDrop {
+			// Thus if the user voted down, they get a point
+			if latestVote.VoteDirection == "down" {
+				currentUserScore += 1
+			} else {
+				currentUserScore -= 1
+			}
+		} else {
+			if latestVote.VoteDirection == "up" {
+				currentUserScore += 1
+			} else {
+				currentUserScore -= 1
+			}
+		}
+		user.Score = currentUserScore
+
 		// Update the user with the new vote
-		updatedUser, err := db.DB.UpdateUser(id, *user)
+		updatedUser, err := db.DB.UpdateUser(id, *user, true)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": con.USER_VOTE_UPDATE_FAILED, "message": err.Error()})
 			return
@@ -134,13 +155,17 @@ func CreateUserVote(c *gin.Context) {
 	}
 	// Set the current exchange rate as the value of the coin at the time of the vote
 	newVote.CoinValueAtVote = *currentExchangeRate
+	// Add default values for the vote
 	newVote.VoteDateTime = models.TimestampTime{Time: time.Now()}
+	newVote.CoinValue = 0
+	newVote.VoteCoin = con.COIN_TYPE_BTC
+	newVote.CoinValueCurrency = con.COIN_CURRENCY_USD
 
 	// If there is no ongoing vote, create a new vote
 	user.Votes = append(user.Votes, newVote)
 
 	// Update the user with the extra votes
-	updatedUser, err := db.DB.UpdateUser(id, *user)
+	updatedUser, err := db.DB.UpdateUser(id, *user, false)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": con.USER_VOTE_UPDATE_FAILED, "message": err.Error()})
 		return

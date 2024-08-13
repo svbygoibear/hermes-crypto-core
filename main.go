@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"hermes-crypto-core/internal/db"
+	"hermes-crypto-core/internal/handlers/coins"
 	"hermes-crypto-core/internal/handlers/users"
 	"hermes-crypto-core/internal/middleware"
 
@@ -32,20 +33,21 @@ func init() {
 	r.Use(middleware.RecoverMiddleware(), middleware.CORSMiddleware())
 
 	// Routes for the users API
-
 	// Votes of users
 	r.GET("users/:id/votes", users.GetUserVotesById)
 	r.POST("users/:id/votes", users.CreateUserVote)
 	r.GET("users/:id/votes/result", users.GetLastUserVoteResult)
-
 	// Health check
 	r.GET("users/health", users.HealthCheck)
-
 	// Users base
 	r.GET("users", users.GetUsers)
 	r.GET("users/:id", users.GetUser)
 	r.POST("users", users.CreateUser)
 	r.DELETE("users/:id", users.DeleteUser)
+
+	// Routes for the coins API
+	// Coin Results
+	r.GET("coin/btc", coins.GetCurrentBTCCoinValue)
 
 	// Set up the Lambda proxy
 	ginLambda = ginadapter.New(r)
