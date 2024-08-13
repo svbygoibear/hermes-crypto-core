@@ -47,7 +47,7 @@ func init() {
 
 	// Routes for the coins API
 	// Coin Results
-	r.GET("coin/btc", coins.GetCurrentBTCCoinValueInUSD)
+	r.GET("coins/btc", coins.GetCurrentBTCCoinValueInUSD)
 
 	// Set up the Lambda proxy
 	ginLambda = ginadapter.New(r)
