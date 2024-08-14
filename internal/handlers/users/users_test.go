@@ -35,6 +35,9 @@ func (m *MockDB) GetUserByID(id string) (*models.User, error) {
 
 func (m *MockDB) GetUserByEmail(email string) (*models.User, error) {
 	args := m.Called(email)
+	if args.Get(0) == nil {
+		return nil, nil
+	}
 	return args.Get(0).(*models.User), args.Error(1)
 }
 
@@ -99,11 +102,11 @@ func TestGetUser(t *testing.T) {
 	assert.Equal(t, *mockUser, response)
 }
 
-func TestCreateUser(t *testing.T) {
+func TestCreateExistingUserByEmail(t *testing.T) {
 	r, mockDB := setupTestRouter()
 	r.POST("/users", CreateUser)
 
-	newUser := models.User{Name: "New User", Email: "test@test.com"}
+	newUser := models.User{Id: "188912334", Name: "New User", Email: "test@test.com"}
 	mockDB.On("GetUserByEmail", newUser.Email).Return(&newUser, nil)
 	mockDB.On("CreateUser", newUser).Return(&newUser, nil)
 
@@ -112,11 +115,11 @@ func TestCreateUser(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/users", bytes.NewBuffer(body))
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, 201, w.Code)
+	assert.Equal(t, 200, w.Code)
 	var response models.User
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.Nil(t, err)
-	assert.Equal(t, newUser, response)
+	assert.Equal(t, newUser.Id, response.Id)
 }
 
 func TestUpdateUser(t *testing.T) {

@@ -11,7 +11,7 @@ import (
 )
 
 // CoinGeckoService is a service that interacts with the CoinGecko API
-func GetCurrentExchangeRate() (*float64, error) {
+func GeckoGetCurrentExchangeRate() (*float64, error) {
 	apiKey := os.Getenv("GECKO_API_KEY")
 	cgClient := goingecko.NewClient(nil, apiKey)
 	defer cgClient.Close()
@@ -21,7 +21,7 @@ func GetCurrentExchangeRate() (*float64, error) {
 		fmt.Print("Something went wrong...")
 		return nil, models.ReturnError{ErrorMessage: "Failed to retrieve data from CoinGecko API"}
 	}
-	fmt.Printf("Bitcoin price is: %f$", data.MarketData.CurrentPrice.Usd)
+	fmt.Printf("GECKO: Bitcoin price is: %f$", data.MarketData.CurrentPrice.Usd)
 
 	return &data.MarketData.CurrentPrice.Usd, nil
 }
