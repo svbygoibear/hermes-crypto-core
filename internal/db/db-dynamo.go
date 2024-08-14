@@ -187,24 +187,27 @@ func (d *dynamoDB) GetUserByID(id string) (*models.User, error) {
 
 // GetUserByEmail retrieves a specific user by Email
 func (d *dynamoDB) GetUserByEmail(email string) (*models.User, error) {
-	input := &dynamodb.GetItemInput{
-		TableName: aws.String(tableName),
-		Key: map[string]types.AttributeValue{
-			"Email": &types.AttributeValueMemberS{Value: email},
+	input := &dynamodb.QueryInput{
+		TableName:              aws.String(tableName),
+		IndexName:              aws.String("EmailIndex"), // Using EmailIndex GSI
+		KeyConditionExpression: aws.String("Email = :Email"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":Email": &types.AttributeValueMemberS{Value: email},
 		},
+		Limit: aws.Int32(1), // We only need one item
 	}
 
-	result, err := client.GetItem(context.TODO(), input)
+	result, err := d.client.Query(context.TODO(), input)
 	if err != nil {
 		return nil, err
 	}
 
-	if result.Item == nil {
+	if len(result.Items) == 0 {
 		return nil, nil // User not found
 	}
 
 	var user models.User
-	err = attributevalue.UnmarshalMap(result.Item, &user)
+	err = attributevalue.UnmarshalMap(result.Items[0], &user)
 	if err != nil {
 		return nil, err
 	}
