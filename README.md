@@ -1,7 +1,7 @@
-<h1 align="center"> hermes-crypto</h1>
-<p align="center"><img alt="hermes-crypto" src="./assets/hermes-crypto-logo.svg" width="200"></p>
+<h1 align="center"> hermes-crypto-core</h1>
+<p align="center"><img alt="hermes-crypto-core" src="./assets/hermes-crypto-logo.svg" width="200"></p>
 
-Hermes (called Mercury in Roman mythology) was considered the messenger of the Olympic gods. He possesses the ability to influence outcomes and tip the scales in favor of those who seek his favor. As the god of luck, he brings both fortune and misfortune to those who dare to test their luck.
+Hermes (called Mercury in Roman mythology) was considered the messenger of the Olympic gods. He possesses the ability to influence outcomes and tip the scales in favor of those who seek his benevolence. As the god of luck, he brings both fortune and misfortune to those who dare to ask.
 
 `hermes-crypto` is a fun page where you can ponder if the price of your coin will go up or down; place your bets, and see if the gods will be in your favour!
 
