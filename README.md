@@ -107,6 +107,10 @@ This `README.md` is only the entry point to getting started with this project bu
 -   [Coming Improvements](./docs/improvements.md): This project may "work" but it can always be improved! Have a look at upcoming enhancements and improvements.
 -   [Technical Decisions](./docs/choices.md): This is a "demo" project, thus some decisions were made which is different to when you host a full `prod` application. This is as close as can be in limited time, but this document explains some of those differences.
 
+### Corresponding F/E
+This project has a corresponding F/E application. Go here to check it out:
+[![hermes-crypto](https://github-readme-stats.vercel.app/api/pin/?username=svbygoibear&repo=hermes-crypto)](https://github.com/svbygoibear/hermes-crypto)
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
