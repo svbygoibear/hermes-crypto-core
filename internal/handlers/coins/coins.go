@@ -15,8 +15,20 @@ import (
 func GetCurrentBTCCoinValueInUSD(c *gin.Context) {
 	currentExchangeRate, err := coin.BinanceGetCurrentExchangeRate()
 	if err != nil {
-		c.JSON(http.StatusFailedDependency, gin.H{"error": "Could not determine current exchange rate", "message": err.Error()})
-		return
+		geckoExchangeRate, err := coin.GeckoGetCurrentExchangeRate()
+		if err != nil {
+			c.JSON(http.StatusFailedDependency, gin.H{"error": "Could not determine current exchange rate", "message": err.Error()})
+			return
+		}
+
+		coinResult := models.CoinResult{
+			Coin:              con.COIN_TYPE_BTC,
+			CoinValue:         *geckoExchangeRate,
+			CoinValueCurrency: con.COIN_CURRENCY_USD,
+			QueryTime:         models.TimestampTime{Time: time.Now()},
+		}
+
+		c.JSON(http.StatusOK, coinResult)
 	}
 
 	coinResult := models.CoinResult{

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	// "os"
+	"os"
 	"strconv"
 	"strings"
 
@@ -14,10 +14,9 @@ import (
 )
 
 func BinanceGetCurrentExchangeRate() (*float64, error) {
-	// apiKey := os.Getenv("BINANCE_API_KEY")
-	// apiSecret := os.Getenv("BINANCE_SECRET_KEY")
-	// client := binance.NewClient(apiKey, apiSecret)
-	client := binance.NewClient("", "")
+	apiKey := os.Getenv("BINANCE_API_KEY")
+	apiSecret := os.Getenv("BINANCE_SECRET_KEY")
+	client := binance.NewClient(apiKey, apiSecret)
 
 	prices, err := client.NewListPricesService().Symbol("BTCUSDT").Do(context.Background())
 	if err != nil {
