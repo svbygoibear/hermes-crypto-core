@@ -28,13 +28,13 @@ This repo contains all the services and core code (and none of the client stuff!
 ```
 
 ### API
-Ultimately, this is an API with all the functionality necessary to run. It follows some `REST`-like principles, and the API itself is split into domains:
+This is an API with all the functionality necessary to run. It follows some `REST`-like principles, and the API itself is split into domains:
 
 #### Users
 The `users` API focusses on all functions relating to users and their votes. Since user and vote entities are tied together, they are both represented by this API together.
 
 #### Coins
-The `coins` API are centered around... You guessed it! Coin prices. This gives us the ability to swap out our 3rd party APIs easily by exposing a set of our own endpoints to our F/E client.
+The `coins` API is centered around... You guessed it! Coin prices. This gives us the ability to swap out our 3rd party APIs easily by exposing a set of our own endpoints to our F/E client.
 
 ## What makes me tick?
 
@@ -42,7 +42,7 @@ Under the hood, I am powered by;
 
 -   [Gin](https://gin-gonic.com/): Gin is a fast, easy to use web-framework perfect for crafting APIs at scale!
 -   [Golang](https://go.dev/): Go is an open-source programming language that is easy to learn, has tons of libraries and is well used and loved.
--   [DynamoDB](https://aws.amazon.com/pm/dynamodb): Following the theme of easy and lightweight, this project makes use of  DynamoDB to keep track of any info.
+-   [DynamoDB](https://aws.amazon.com/pm/dynamodb): Following the theme of easy and lightweight, this project makes use of  DynamoDB to keep track of votes and user information.
 
 # Installation
 
@@ -56,7 +56,7 @@ To properly run this project, assuming you already have git installed, you will 
 -   [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html): Interacting with any CLI commands will require the installation of AWS CLI.
 -   [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html): We will be using the AWS SAM CLI for deploying code. This is also to run our lambda API locally for testing. Currently this has been tested on version `1.121.0`.
 -   [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git): You will also need to install Git (hopefully you have already - but if not now is your chance!).
--   [Docker](https://www.docker.com/): To make things easier, this project has been docker-rized. No more manual db setup, just compose and GO. 
+-   [Docker](https://www.docker.com/): To make things easier, this project has been dockerized. No more manual db setup, just compose and GO. 
 -   [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.html): If you want to connect to your local instance of DynamoDB - use AWS' NoSQL Workbench. For more info on connecting to a local db; check [this](https://medium.com/@bthiban/running-dynamodb-locally-using-docker-68c8bbed29fa) out.
 -   [AWS Lambda runtime interface emulator](https://docs.aws.amazon.com/lambda/latest/dg/go-image.html#go-image-provided): If you want to attempt to run and debug the underlying serverless Lambda architecture, you will need to install the emulator. More info [here](https://github.com/aws/aws-lambda-runtime-interface-emulator?tab=readme-ov-file#installing) as well. Take note of your operating system.
 -   [Make](https://makefiletutorial.com/): Another way to interact with this repo is to make use of... Make! It is still useful, even if this is not a large program.
@@ -66,7 +66,7 @@ To properly run this project, assuming you already have git installed, you will 
 - For multiple versions of Go, have a look here: [Managing Go Installations](https://go.dev/doc/manage-install).
 
 #### Running and Deploying
-There are a few extra steps before getting this project up and running, so follow these steps to do so seamlessly. There is some assumption that you already know how to use go and how to use AWS. Refer to any of the link to help get started if that is not the case.
+There are a few extra steps before getting this project up and running, so follow these steps to do so seamlessly. I assume that you already know how to use Go and how to use AWS. Refer to any of the links above to help get started if that is not the case.
 
 ##### CoinGecko
 To fetch crypto related data, we are currently connected to [`CoinGecko`](https://www.coingecko.com/). You will need to create a free account when testing this locally and replace the `GECKO_API_KEY` environment variable with the API Key from your account.
@@ -89,12 +89,12 @@ This is where the `Makefile` will come in handy. Depending on if you are on a wi
 ```
 make build-windows
 ```
-This will build (and zip) this project as well as kick off a local dynamodb database for you to work with. Some info on this:
+This will build (and zip) this project as well as kick off a local dynamodb database for you to work with as you develop. Some info on this:
 - The zip file can directly be uploaded to [AWS Lambda](https://aws.amazon.com/pm/lambda), with a function configured as a REST API with all your environment variables and roles setup to deploy this manually.
 - It also creates your database, which you can connect on your database GUI using `localhost` and port `1433`.
 
 ##### CAVEAT
-Check out the [Coming Improvements](./docs/improvements.md) document below, currently there is no "seamless" way to run this project and connect it to dynamoDB in one quick command. Therefore for every bit of code and logic added, there also needs to be corresponding tests to ensure code quality.
+Check out the [Coming Improvements](./docs/improvements.md) document below, currently there is no "seamless" way to run this project and connect it to dynamoDB in one quick command. Therefore for every bit of code and logic added, there also need to be corresponding tests to ensure code quality.
 
 ## Architecture
 This whole application has been built to run serverless on AWS Lambda. This diagram gives you a rough idea of what that looks like:
@@ -102,7 +102,7 @@ This whole application has been built to run serverless on AWS Lambda. This diag
 This project is fueled by `gin` and `Go` to keep things going, all whilst currently exposing 2 main domains
 
 ## A Deep Dive
-This `README.md` is only the entry point to getting started with this project but it does not give you the full insight into some of the decisions made NOR about any upcoming work that has been prioritised. If you want to dive into that info, please check out:
+This `README.md` is only the entry point to getting started with this project but it does not give you the full insight into some of the decisions made *nor* about any upcoming work that has been prioritised. If you want to dive into that info, please check out:
 
 -   [Coming Improvements](./docs/improvements.md): This project may "work" but it can always be improved! Have a look at upcoming enhancements and improvements.
 -   [Technical Decisions](./docs/choices.md): This is a "demo" project, thus some decisions were made which is different to when you host a full `prod` application. This is as close as can be in limited time, but this document explains some of those differences.
@@ -123,4 +123,3 @@ We follow the following structure when it comes to adding labels or PRs:
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
