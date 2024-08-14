@@ -185,7 +185,7 @@ func (d *dynamoDB) GetUserByID(id string) (*models.User, error) {
 	return &user, nil
 }
 
-// GetUserByID retrieves a specific user by Email
+// GetUserByEmail retrieves a specific user by Email
 func (d *dynamoDB) GetUserByEmail(email string) (*models.User, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(tableName),

@@ -73,16 +73,18 @@ To fetch crypto related data, we are currently connected to [`CoinGecko`](https:
 
 ##### Run locally
 First you will need to setup a `.env` file on project root with the following structure, adding your own values where needed:
-```
+```bash
 # .env file
 # This is all your config
 IS_LOCAL=true
 
 GECKO_API_KEY=[your-key-here]
+BINANCE_API_KEY=[your-key-here]
+BINANCE_SECRET_KEY=[your-secret-here]
 
 AWS_DYNAMODB_REGION=[your-region-here]
 ```
-Keep in mind this will not be committed as part of your code.
+Keep in mind this will not be committed as part of your code. All environment variables here will also need to be configured on your Lambda instance for this app.
 
 #### Setup Environment
 This is where the `Makefile` will come in handy. Depending on if you are on a windows machine (or not - note windows functionality is the only one that has been tested); you can run;

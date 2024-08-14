@@ -57,7 +57,7 @@ func GetLastUserVoteResult(c *gin.Context) {
 		}
 
 		// If the vote is not recent, we need to check the exchange rate and update the vote
-		currentExchangeRate, err := coin.GetCurrentExchangeRate()
+		currentExchangeRate, err := coin.BinanceGetCurrentExchangeRate()
 		if err != nil {
 			c.JSON(http.StatusFailedDependency, gin.H{"error": "Could not determine current exchange rate", "message": err.Error()})
 			return
@@ -148,7 +148,7 @@ func CreateUserVote(c *gin.Context) {
 		}
 	}
 
-	currentExchangeRate, err := coin.GetCurrentExchangeRate()
+	currentExchangeRate, err := coin.BinanceGetCurrentExchangeRate()
 	if err != nil {
 		c.JSON(http.StatusFailedDependency, gin.H{"error": "Could not determine current exchange rate"})
 		return

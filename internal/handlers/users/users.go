@@ -41,16 +41,20 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	log.Printf("Checking to see if user already exists by email: %v", newUser.Email)
 	// Check if user already exists by email
 	user, err := db.DB.GetUserByEmail(newUser.Email)
 	if err != nil {
 		log.Printf("Error getting user by email: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check existing user"})
 	}
-	log.Printf("We continue on at this point")
+
+	log.Printf("User: %v", user)
+
 	// If user already exists, return the existing user
 	if user != nil {
-		c.JSON(http.StatusCreated, user)
+		c.JSON(http.StatusOK, user)
 		return
 	}
 	log.Printf("We have no user, thus we move")
