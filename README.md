@@ -23,7 +23,7 @@ This repo contains all the services and core code (and none of the client stuff!
 │   └── handlers                <-- These are our API handlers - they are the glue that keeps things together
 │   └── middleware              <-- Middleware for our API > in this case error handling
 │   └── models                  <-- All models used throughout this app
-│   └── coin                    <-- External services code to interact with Gecko Coin
+│   └── coin                    <-- External services code to interact with Gecko Coin & Binance
 └── main.go                     <-- Lambda function code, our entrypoint
 ```
 
@@ -69,7 +69,12 @@ To properly run this project, assuming you already have git installed, you will 
 There are a few extra steps before getting this project up and running, so follow these steps to do so seamlessly. I assume that you already know how to use Go and how to use AWS. Refer to any of the links above to help get started if that is not the case.
 
 ##### CoinGecko
-To fetch crypto related data, we are currently connected to [`CoinGecko`](https://www.coingecko.com/). You will need to create a free account when testing this locally and replace the `GECKO_API_KEY` environment variable with the API Key from your account.
+One of the ways we fetch crypto related data, is connecting to [`CoinGecko`](https://www.coingecko.com/). You will need to create a free account when testing this locally and replace the `GECKO_API_KEY` environment variable with the API Key from your account.
+
+#### Binance
+We use also use [Binanace](https://www.binance.com/) (currently this is the API we use) as a third-party API to collect current trading data on bitcoin. To setup a test account, follow the steps outlined here to generate an API key which you will use for your own development: https://www.binance.com/en/support/faq/how-to-create-api-keys-on-binance-360002502072?hl=en
+
+For the environment variables below, you may leave both as empty strings as we do not need the api keys or secrets for our current functionality of retrieving prices on their API.
 
 ##### Run locally
 First you will need to setup a `.env` file on project root with the following structure, adding your own values where needed:

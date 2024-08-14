@@ -5,7 +5,8 @@
 These improvements are rated quite high in priority as they could affect the functionality of the application to end users.
 
 ### Switch from Gecko > Binance
-Currently we make use of [CoinGecko](https://www.coingecko.com/) to get up to date information on crypto prices. CoinGecko unfortunately have very poor limits on their free plan, thus switching to a 3rd party API such as [Binance](https://www.binance.com/) would be the smart move longer term. Currently when we run out of our total monthly API calls, the app will cease to function as this would cause an error.
+~~Currently we make use of [CoinGecko](https://www.coingecko.com/) to get up to date information on crypto prices. CoinGecko unfortunately have very poor limits on their free plan, thus switching to a 3rd party API such as [Binance](https://www.binance.com/) would be the smart move longer term. Currently when we run out of our total monthly API calls, the app will cease to function as this would cause an error.~~
+This has been implemented.
 
 # Overall Use Improvements
 These are improvements and changes that can be applied that will expose more data to increase the feature set on the F/E or improve overall consistency.
