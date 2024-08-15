@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -18,16 +20,8 @@ import (
 
 var ginLambda *ginadapter.GinLambda
 
-func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Default().Println("Could not load .env file, using environment variables.")
-	}
-
-	// DB initialization
-	db.Init()
-
-	// Set up Gin
+func setupRouter() *gin.Engine {
+	// Setup gin router
 	r := gin.Default()
 	// Add middleware for panic recovery
 	r.Use(middleware.RecoverMiddleware(), middleware.CORSMiddleware())
@@ -49,8 +43,20 @@ func init() {
 	// Coin Results
 	r.GET("coins/btc", coins.GetCurrentBTCCoinValueInUSD)
 
+	return r
+}
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Default().Println("Could not load .env file, using environment variables.")
+	}
+
+	// DB initialization
+	db.Init()
+
 	// Set up the Lambda proxy
-	ginLambda = ginadapter.New(r)
+	ginLambda = ginadapter.New(setupRouter())
 }
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -59,5 +65,15 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 }
 
 func main() {
-	lambda.Start(handler)
+	httpPort := os.Getenv("HTTP_PORT")
+
+	if httpPort == "" {
+		log.Println("Starting Lambda Handler")
+		lambda.Start(handler)
+	} else {
+		log.Printf("Starting HTTP server on port %s", httpPort)
+		r := setupRouter()
+		formattedPort := fmt.Sprintf(":%s", httpPort)
+		r.Run(formattedPort)
+	}
 }

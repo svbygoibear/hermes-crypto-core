@@ -88,6 +88,8 @@ BINANCE_API_KEY=[your-key-here]
 BINANCE_SECRET_KEY=[your-secret-here]
 
 AWS_DYNAMODB_REGION=[your-region-here]
+
+HTTP_PORT=7575
 ```
 Keep in mind this will not be committed as part of your code. All environment variables here will also need to be configured on your Lambda instance for this app.
 
@@ -97,11 +99,16 @@ This is where the `Makefile` will come in handy. Depending on if you are on a wi
 make build-windows
 ```
 This will build (and zip) this project as well as kick off a local dynamodb database for you to work with as you develop. Some info on this:
-- The zip file can directly be uploaded to [AWS Lambda](https://aws.amazon.com/pm/lambda), with a function configured as a REST API with all your environment variables and roles setup to deploy this manually.
+- The zip file can directly be uploaded to [AWS Lambda](https://aws.amazon.com/pm/lambda), with a function configured as a REST API with all your environment variables and roles setup to deploy this manually; if you want to test this as a Lambda
 - It also creates your database, which you can connect on your database GUI using `localhost` and port `1433`.
 
-##### CAVEAT
-Check out the [Coming Improvements](./docs/improvements.md) document below, currently there is no "seamless" way to run this project and connect it to dynamoDB in one quick command. Therefore for every bit of code and logic added, there also need to be corresponding tests to ensure code quality.
+Make sure that docker is running for the database to be created.
+
+```
+make run-windows
+```
+The next step is to run it. This will run the API on `http://127.0.0.1:7575` and will output any messages to the terminal.
+
 
 ## Architecture
 This whole application has been built to run serverless on AWS Lambda. This diagram gives you a rough idea of what that looks like:
