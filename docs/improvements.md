@@ -38,4 +38,4 @@ Speaking of making the API more robust, this projects API follows quite a few of
 ### Local Build Scripts
 For this, I want to spend some time to use [SAM](https://aws.amazon.com/serverless/sam/) to help write some scripts so contributing developers can easily setup this project locally, develop and test on it. Currently testing has to be done via deploying this application and ensuring that we update configuration manually.
 
-The ideal would be to keep this repo, as well as how we run it and how we deploy it, as consistent as possible.
+The ideal would be to keep this repo, as well as how we run it and how we deploy it, as consistent as possible. Currently we are only able to serve it 2 ways - via Lambda if hosted and `http` when running locally.

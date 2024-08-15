@@ -1,4 +1,4 @@
-.PHONY: build build-windows
+.PHONY: build build-windows run-windows
 
 build:
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o bin/bootstrap -tags lambda.norpc main.go
@@ -11,4 +11,7 @@ build-windows:
 	tar -acf bin/bootstrap.zip bin/bootstrap
 	docker-compose -f deployments/docker-compose-local.yml up -d --remove-orphans
 
-run-windows: build-windows
+run-windows:
+	@echo "Building and running the application..."
+	go build -o main.exe
+	.\main.exe

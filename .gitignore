@@ -2,6 +2,8 @@
 tests.http
 bin
 .env
+main
+main.exe
 
 # Editor
 .vscode
