@@ -21,7 +21,7 @@ type dynamoDB struct {
 
 var client *dynamodb.Client
 
-const tableName = "hermes-crypto-users2"
+const tableName = "hermes-crypto-users"
 const emailIndex = "EmailIndex"
 
 // Init initializes the DynamoDB client
