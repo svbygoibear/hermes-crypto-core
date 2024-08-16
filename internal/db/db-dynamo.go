@@ -22,6 +22,7 @@ type dynamoDB struct {
 var client *dynamodb.Client
 
 const tableName = "hermes-crypto-users"
+const emailIndex = "EmailIndex"
 
 // Init initializes the DynamoDB client
 func Init() {
@@ -103,11 +104,45 @@ func createTableIfNotExists() {
 				AttributeName: aws.String("Id"),
 				AttributeType: types.ScalarAttributeTypeS,
 			},
+			{
+				AttributeName: aws.String("Email"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
+			{
+				AttributeName: aws.String("Name"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
 		},
 		KeySchema: []types.KeySchemaElement{
 			{
 				AttributeName: aws.String("Id"),
 				KeyType:       types.KeyTypeHash,
+			},
+			{
+				AttributeName: aws.String("Email"),
+				KeyType:       types.KeyTypeRange,
+			},
+		},
+		GlobalSecondaryIndexes: []types.GlobalSecondaryIndex{
+			{
+				IndexName: aws.String(emailIndex),
+				KeySchema: []types.KeySchemaElement{
+					{
+						AttributeName: aws.String("Email"),
+						KeyType:       types.KeyTypeHash,
+					},
+					{
+						AttributeName: aws.String("Name"),
+						KeyType:       types.KeyTypeRange,
+					},
+				},
+				Projection: &types.Projection{
+					ProjectionType: types.ProjectionTypeAll,
+				},
+				ProvisionedThroughput: &types.ProvisionedThroughput{
+					ReadCapacityUnits:  aws.Int64(5),
+					WriteCapacityUnits: aws.Int64(5),
+				},
 			},
 		},
 		TableName: aws.String(tableName),
@@ -189,7 +224,7 @@ func (d *dynamoDB) GetUserByID(id string) (*models.User, error) {
 func (d *dynamoDB) GetUserByEmail(email string) (*models.User, error) {
 	input := &dynamodb.QueryInput{
 		TableName:              aws.String(tableName),
-		IndexName:              aws.String("EmailIndex"), // Using EmailIndex GSI
+		IndexName:              aws.String(emailIndex), // Using EmailIndex GSI
 		KeyConditionExpression: aws.String("Email = :Email"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":Email": &types.AttributeValueMemberS{Value: email},
