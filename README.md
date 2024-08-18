@@ -17,7 +17,7 @@ This repo contains all the services and core code (and none of the client stuff!
 ```bash
 .
 ├── README.md                   <-- This instructions file
-├── deployments                 <-- This contains files to help setup the environment and database locally.
+├── deployments                 <-- This contains files to help set up the environment and database locally.
 ├── internal                    <-- All internal services, routing, middleware, dbs etc
 │   ├── db                      <-- All logic relating to interacting with the underlying database
 │   └── handlers                <-- These are our API handlers - they are the glue that keeps things together
@@ -31,7 +31,7 @@ This repo contains all the services and core code (and none of the client stuff!
 This is an API with all the functionality necessary to run. It follows some `REST`-like principles, and the API itself is split into domains:
 
 #### Users
-The `users` API focusses on all functions relating to users and their votes. Since user and vote entities are tied together, they are both represented by this API together.
+The `users` API focuses on all functions relating to users and their votes. Since user and vote entities are tied together, they are both represented by this API together.
 
 #### Coins
 The `coins` API is centered around... You guessed it! Coin prices. This gives us the ability to swap out our 3rd party APIs easily by exposing a set of our own endpoints to our F/E client.
@@ -41,7 +41,7 @@ The `coins` API is centered around... You guessed it! Coin prices. This gives us
 Under the hood, I am powered by;
 
 -   [Gin](https://gin-gonic.com/): Gin is a fast, easy to use web-framework perfect for crafting APIs at scale!
--   [Golang](https://go.dev/): Go is an open-source programming language that is easy to learn, has tons of libraries and is well used and loved.
+-   [Golang](https://go.dev/): Go is an open-source programming language that is easy to learn, has tons of libraries, and is well-used and loved.
 -   [DynamoDB](https://aws.amazon.com/pm/dynamodb): Following the theme of easy and lightweight, this project makes use of  DynamoDB to keep track of votes and user information.
 
 # Installation
@@ -54,7 +54,7 @@ To properly run this project, assuming you already have git installed, you will 
 -   [Go](https://go.dev/doc/install): First things first, click on the link to install the latest version of Go. This project has been tested with `v1.22.6` and offers support for this version. Follow the requirements based on your OS.
 -   [node.js](https://nodejs.org/en): Lowest possible version compatible with this project is `v18.14.0`. The current LTS is however recommended.
 -   [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html): Interacting with any CLI commands will require the installation of AWS CLI.
--   [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html): We will be using the AWS SAM CLI for deploying code. This is also to run our lambda API locally for testing. Currently this has been tested on version `1.121.0`.
+-   [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html): We will be using the AWS SAM CLI for deploying code. This is also to run our lambda API locally for testing. Currently, this has been tested on version `1.121.0`.
 -   [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git): You will also need to install Git (hopefully you have already - but if not now is your chance!).
 -   [Docker](https://www.docker.com/): To make things easier, this project has been dockerized. No more manual db setup, just compose and GO. 
 -   [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.html): If you want to connect to your local instance of DynamoDB - use AWS' NoSQL Workbench. For more info on connecting to a local db; check [this](https://medium.com/@bthiban/running-dynamodb-locally-using-docker-68c8bbed29fa) out.
@@ -69,15 +69,15 @@ To properly run this project, assuming you already have git installed, you will 
 There are a few extra steps before getting this project up and running, so follow these steps to do so seamlessly. I assume that you already know how to use Go and how to use AWS. Refer to any of the links above to help get started if that is not the case.
 
 ##### CoinGecko
-One of the ways we fetch crypto related data, is connecting to [`CoinGecko`](https://www.coingecko.com/). You will need to create a free account when testing this locally and replace the `GECKO_API_KEY` environment variable with the API Key from your account.
+One of the ways we fetch crypto-related data, is by connecting to [`CoinGecko`](https://www.coingecko.com/). You will need to create a free account when testing this locally and replace the `GECKO_API_KEY` environment variable with the API Key from your account.
 
 #### Binance
-We use also use [Binanace](https://www.binance.com/) (currently this is the API we use) as a third-party API to collect current trading data on bitcoin. To setup a test account, follow the steps outlined here to generate an API key which you will use for your own development: https://www.binance.com/en/support/faq/how-to-create-api-keys-on-binance-360002502072?hl=en
+We use also use [Binanace](https://www.binance.com/) (currently this is the API we use) as a third-party API to collect current trading data on Bitcoin. To set up a test account, follow the steps outlined here to generate an API key which you will use for your own development: https://www.binance.com/en/support/faq/how-to-create-api-keys-on-binance-360002502072?hl=en
 
-For the environment variables below, you may leave both as empty strings as we do not need the api keys or secrets for our current functionality of retrieving prices on their API.
+For the environment variables below, you may leave both as empty strings as we do not need the API keys or secrets for our current functionality of retrieving prices on their API.
 
 ##### Run locally
-First you will need to setup a `.env` file on project root with the following structure, adding your own values where needed:
+First, you will need to set up a `.env` file on the project root with the following structure, adding your own values where needed:
 ```bash
 # .env file
 # This is all your config
@@ -94,12 +94,12 @@ HTTP_PORT=7575
 Keep in mind this will not be committed as part of your code. All environment variables here will also need to be configured on your Lambda instance for this app.
 
 #### Setup Environment
-This is where the `Makefile` will come in handy. Depending on if you are on a windows machine (or not - note windows functionality is the only one that has been tested); you can run;
+This is where the `Makefile` will come in handy. Depending on if you are on a Windows machine (or not - note Windows functionality is the only one that has been tested); you can run;
 ```
 make build-windows
 ```
 This will build (and zip) this project as well as kick off a local dynamodb database for you to work with as you develop. Some info on this:
-- The zip file can directly be uploaded to [AWS Lambda](https://aws.amazon.com/pm/lambda), with a function configured as a REST API with all your environment variables and roles setup to deploy this manually; if you want to test this as a Lambda
+- The zip file can be uploaded directly to [AWS Lambda](https://aws.amazon.com/pm/lambda), with a function configured as a REST API with all your environment variables and roles set up to deploy this manually; if you want to test this as a Lambda
 - It also creates your database, which you can connect on your database GUI using `localhost` and port `1433`.
 
 Make sure that docker is running for the database to be created.
@@ -119,7 +119,8 @@ This project is fueled by `gin` and `Go` to keep things going, all whilst curren
 This `README.md` is only the entry point to getting started with this project but it does not give you the full insight into some of the decisions made *nor* about any upcoming work that has been prioritised. If you want to dive into that info, please check out:
 
 -   [Coming Improvements](./docs/improvements.md): This project may "work" but it can always be improved! Have a look at upcoming enhancements and improvements.
--   [Technical Decisions](./docs/choices.md): This is a "demo" project, thus some decisions were made which is different to when you host a full `prod` application. This is as close as can be in limited time, but this document explains some of those differences.
+-   [Technical Decisions](./docs/choices.md): This is a "demo" project, thus some decisions were made which is different from when you host a full `prod` application. This is as close as can be in limited time, but this document explains some of those differences.
+-   [Limitations](./docs/limitations.md): Here I go through the logic limitations, why they exist, some pros and cons as well as what I would improve.
 
 ### Corresponding F/E
 This project has a corresponding F/E application. Go here to check it out:
@@ -129,10 +130,10 @@ This project has a corresponding F/E application. Go here to check it out:
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 We follow the following structure when it comes to adding labels or PRs:
-- New work: This is either a `enhancement` or `feature` as it adds essentially "new code" or "updates code" related to the functionality of this app.
-- Docs: If you are updating the documentation, adding any helpers or tests this would fall under `chore` or `documentation`.
-- Dependencies: Specifically for updating of dependencies, please use `dependencies` as the label. This should contain no other types of work.
-- Bugs: Resolving issues or bugs, use `fix`, `bugfix` or `bug`. If you have to update dependencies to resolve a bug, then tag it as a bug and not a dependency.
+- New work: This is either an `enhancement` or `feature` as it essentially adds "new code" or "updates code" related to the functionality of this app.
+- Docs: If you are updating the documentation, or adding any helpers or tests this would fall under `chore` or `documentation`.
+- Dependencies: Specifically for updating dependencies, please use `dependencies` as the label. This should contain no other types of work.
+- Bugs: Resolving issues or bugs, use `fix`, `bugfix`, or `bug`. If you have to update dependencies to resolve a bug, then tag it as a bug and not a dependency.
 
 ## License
 
