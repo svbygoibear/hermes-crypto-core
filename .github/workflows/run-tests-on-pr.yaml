@@ -1,6 +1,9 @@
 name: Execute Tests
 
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches: [main]
 
 jobs:
   test:
@@ -18,3 +21,12 @@ jobs:
 
       - name: Test
         uses: robherley/go-test-action@v0
+
+  all-tests-passed:
+    needs: [test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: All tests passed
+        if: needs.test.result != 'success'
+        run: exit 1
