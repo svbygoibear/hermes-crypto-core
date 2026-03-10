@@ -1,10 +1,10 @@
 name: Deploy to AWS Lambda
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Execute Tests"]
+    types: [completed]
+    branches: [main]
 
 permissions:
   id-token: write
@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   deploy-to-lambda:
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
