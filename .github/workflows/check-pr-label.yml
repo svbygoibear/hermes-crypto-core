@@ -1,0 +1,20 @@
+name: Check PR Label
+
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+
+jobs:
+  check-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR has a label
+        run: |
+          LABELS='${{ toJson(github.event.pull_request.labels) }}'
+          COUNT=$(echo "$LABELS" | jq 'length')
+          if [ "$COUNT" -eq "0" ]; then
+            echo "This PR has no labels. Please add at least one label before merging."
+            exit 1
+          else
+            echo "PR has $COUNT label(s). Check passed."
+          fi
