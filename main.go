@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"hermes-crypto-core/internal/db"
+	"hermes-crypto-core/internal/handlers/analytics"
 	"hermes-crypto-core/internal/handlers/coins"
 	"hermes-crypto-core/internal/handlers/users"
 	"hermes-crypto-core/internal/middleware"
@@ -42,6 +43,9 @@ func setupRouter() *gin.Engine {
 	// Routes for the coins API
 	// Coin Results
 	r.GET("coins/btc", coins.GetCurrentBTCCoinValueInUSD)
+
+	// Analytics proxy — keeps PostHog API key server-side
+	r.POST("analytics/capture/", analytics.CaptureEvent)
 
 	return r
 }
