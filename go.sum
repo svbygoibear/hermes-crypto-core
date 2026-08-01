@@ -1,5 +1,7 @@
 github.com/JulianToledano/goingecko v0.3.0 h1:EXoVzRRNS6QhPcfsx+xSFABCxn9RQacqf/I7mWNJMZg=
 github.com/JulianToledano/goingecko v0.3.0/go.mod h1:oH/2pOWrtVbvgGk3n3rX3+/1wSXm2Pg9Bu8YvxgZkOQ=
+github.com/JulianToledano/goingecko v0.5.0 h1:wkqRDIaudwpBAsxNWsLdHsh9y1xbovb3dchMYRceB64=
+github.com/JulianToledano/goingecko v0.5.0/go.mod h1:8lXTMcFXccw4TX0GCR1gYjujp78yUTcLw6k83F9lvuA=
 github.com/adshao/go-binance/v2 v2.6.0 h1:sXPkfix+SgBojJmkt+sNJbJBQZOJK5GFP/WtAu+B5r0=
 github.com/adshao/go-binance/v2 v2.6.0/go.mod h1:41Up2dG4NfMXpCldrDPETEtiOq+pHoGsFZ73xGgaumo=
 github.com/aws/aws-lambda-go v1.47.0 h1:0H8s0vumYx/YKs4sE7YM0ktwL2eWse+kfopsRI1sXVI=
