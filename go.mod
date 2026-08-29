@@ -1,6 +1,6 @@
 module hermes-crypto-core
 
-go 1.22.6
+go 1.26
 
 require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.34.4
@@ -32,7 +32,7 @@ require (
 require (
 	github.com/JulianToledano/goingecko v0.3.0
 	github.com/adshao/go-binance/v2 v2.6.0
-	github.com/aws/aws-lambda-go v1.47.0
+	github.com/aws/aws-lambda-go v1.55.0
 	github.com/aws/aws-sdk-go-v2 v1.30.3
 	github.com/aws/aws-sdk-go-v2/config v1.27.27
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.14.10
